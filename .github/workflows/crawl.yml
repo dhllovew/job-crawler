@@ -1,0 +1,41 @@
+name: Job Crawler
+on:
+  schedule:
+    - cron: '0 9 * * *'  # 每天UTC时间9:00运行（北京时间17:00）
+  workflow_dispatch:     # 允许手动触发
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser chromium-chromedriver
+          python -m pip install --upgrade pip
+          pip install selenium pandas fake-useragent openpyxl
+
+      - name: Configure ChromeDriver
+        run: |
+          echo "CHROME_PATH=$(which chromium-browser)" >> $GITHUB_ENV
+          echo "CHROMEDRIVER_PATH=$(which chromedriver)" >> $GITHUB_ENV
+
+      - name: Run crawler
+        env:
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PWD: ${{ secrets.EMAIL_PWD }}
+        run: |
+          python crawler_github.py
+
+      - name: Archive results
+        uses: actions/upload-artifact@v3
+        with:
+          name: job-data
+          path: data/
