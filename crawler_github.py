@@ -1,4 +1,5 @@
 import os
+import shutil
 import time
 import json
 import logging
@@ -269,15 +270,39 @@ def load_historical_data():
         }
 
 def save_historical_data(data):
-    """保存数据到本地文件"""
+    """改进的数据保存函数（带验证）"""
     try:
         logger.info("保存数据到本地...")
+        
+        # 1. 先备份旧文件
+        if os.path.exists(DATA_FILE):
+            timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+            backup_file = f"{DATA_FILE}.bak.{timestamp}"
+            shutil.copy2(DATA_FILE, backup_file)
+            logger.info(f"已创建备份文件: {backup_file}")
+        
+        # 2. 保存新数据
         with open(DATA_FILE, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
-        logger.info(f"成功保存数据到: {DATA_FILE}")
+        
+        # 3. 验证保存是否成功
+        with open(DATA_FILE, 'r', encoding='utf-8') as f:
+            saved_data = json.load(f)
+            if len(saved_data['jobs']) != len(data['jobs']):
+                raise ValueError("保存后数据不一致")
+        
+        logger.info(f"成功保存数据到: {DATA_FILE} (包含 {len(data['jobs'])} 条职位记录)")
         return True
+        
     except Exception as e:
         logger.error(f"保存数据失败: {str(e)}")
+        # 尝试恢复备份
+        if 'backup_file' in locals():
+            try:
+                shutil.copy2(backup_file, DATA_FILE)
+                logger.info("已从备份恢复数据文件")
+            except Exception as restore_error:
+                logger.error(f"恢复备份失败: {str(restore_error)}")
         return False
 
 def save_excel_file(job_list, filename, added_jobs=None):
@@ -397,32 +422,35 @@ def clean_expired_jobs(historical_data):
     return historical_data, expired_count
 
 def compare_jobs(new_jobs, historical_data):
-    """比较新旧职位数据，识别新增和更新的职位"""
+    """改进的职位比较函数"""
     logger.info("比较新旧职位数据...")
     added_jobs = []
     updated_jobs = []
-    total_jobs = 0
     
-    # 创建职位唯一标识符的函数
+    # 改进的职位ID生成方式
     def create_job_id(job):
-        """创建职位的唯一标识符"""
-        return f"{job['company']}-{job['position']}-{job['update_time']}"
+        """更可靠的职位唯一标识符"""
+        # 使用公司+职位+地点+更新日期作为ID
+        return f"{job['company']}_{job['position']}_{job['location']}_{job['update_time'].split('T')[0]}".replace("/", "-")
     
     # 处理新爬取的职位
     for job in new_jobs:
         job_id = create_job_id(job)
         
+        # 检查是否为新职位
         if job_id not in historical_data['jobs']:
             # 新增职位
             historical_data['jobs'][job_id] = job
             added_jobs.append(job)
+            logger.debug(f"新增职位: {job_id}")
         else:
-            # 检查职位是否有更新
+            # 检查是否有更新
             existing_job = historical_data['jobs'][job_id]
-            if existing_job['update_time'] != job['update_time']:
+            if existing_job != job:  # 完整比较所有字段
                 # 更新职位信息
                 historical_data['jobs'][job_id] = job
                 updated_jobs.append(job)
+                logger.debug(f"更新职位: {job_id}")
     
     # 更新最后爬取时间
     historical_data['last_update'] = datetime.now().isoformat()
@@ -539,47 +567,45 @@ def generate_html_report(all_jobs, added_jobs, updated_jobs, total_jobs, expired
     return html_content
 
 def send_email(subject, body, attachment_path=None):
-    """发送邮件通知（支持多收件人）"""
+    """发送邮件通知（支持抄送）"""
     try:
-        # 邮件服务器配置（使用更稳定的SMTP配置）
+        # 邮件服务器配置（使用SSL加密）
         smtp_server = "smtp.qq.com"
-        smtp_port = 465  # 改用SSL端口
+        smtp_port = 465
         
         # 创建邮件
         msg = MIMEMultipart()
         msg['From'] = EMAIL_USER
-        msg['To'] = RECEIVER_EMAIL#收件人
-        msg['Cc'] = EMAIL_USER# 抄送给自己
+        msg['To'] = RECEIVER_EMAIL
+        msg['Cc'] = EMAIL_USER  # 抄送给自己
         msg['Subject'] = subject
         
-        # HTML正文（确保编码正确）
+        # 明确指定HTML编码
         msg.attach(MIMEText(body, 'html', 'utf-8'))
 
-        # 添加附件（如果有）
+        # 添加附件
         if attachment_path and os.path.exists(attachment_path):
-            try:
-                with open(attachment_path, 'rb') as f:
-                    part = MIMEApplication(f.read(), Name=os.path.basename(attachment_path))
-                part['Content-Disposition'] = f'attachment; filename="{os.path.basename(attachment_path)}"'
-                msg.attach(part)
-                logger.info(f"已添加附件: {attachment_path}")
-            except Exception as attach_error:
-                logger.error(f"添加附件失败: {str(attach_error)}")
-                # 附件失败不阻止邮件发送
+            with open(attachment_path, 'rb') as f:
+                part = MIMEApplication(f.read(), Name=os.path.basename(attachment_path))
+            part['Content-Disposition'] = f'attachment; filename="{os.path.basename(attachment_path)}"'
+            msg.attach(part)
+            logger.info(f"已添加附件: {attachment_path}")
 
-        # 发送邮件（使用更健壮的SMTP连接方式）
+        # 收件人列表（主送+抄送）
+        recipients = [RECEIVER_EMAIL, EMAIL_USER]
+        
+        # 发送邮件（使用SMTP_SSL）
         with smtplib.SMTP_SSL(smtp_server, smtp_port) as server:
             server.login(EMAIL_USER, EMAIL_PWD)
-            server.send_message(msg)  # 使用send_message替代sendmail
-            
-        logger.info(f"邮件成功发送至: {RECEIVER_EMAIL}")
+            server.sendmail(EMAIL_USER, recipients, msg.as_string())
+        
+        logger.info(f"邮件成功发送至: {RECEIVER_EMAIL} (抄送: {EMAIL_USER})")
         return True
         
-    except smtplib.SMTPException as smtp_error:
-        logger.error(f"SMTP协议错误: {str(smtp_error)}")
+    except smtplib.SMTPException as e:
+        logger.error(f"SMTP协议错误: {str(e)}")
     except Exception as e:
         logger.error(f"邮件发送失败: {str(e)}")
-        # 详细记录错误信息
         import traceback
         logger.error(f"完整错误追踪:\n{traceback.format_exc()}")
     
@@ -703,58 +729,62 @@ def main():
         # 3. 清理过期职位
         historical_data, expired_count = clean_expired_jobs(historical_data)
         
-        # 4. 对比新旧数据
+        # 4. 对比新旧数据（使用改进后的比较函数）
         added_jobs, updated_jobs, historical_data, total_jobs = compare_jobs(all_jobs, historical_data)
         
-        logger.info(f"新增职位: {len(added_jobs)}, 更新职位: {len(updated_jobs)}, 总职位数: {total_jobs}")
+        logger.info(f"发现新增职位: {len(added_jobs)}, 更新职位: {len(updated_jobs)}, 总职位数: {total_jobs}")
         
-        # 5. 保存更新后的数据
-        save_success = save_historical_data(historical_data)
+        # 5. 保存更新后的数据（带验证）
+        if not save_historical_data(historical_data):
+            raise Exception("保存数据到JSON文件失败")
         
-        # 6. 生成Excel文件
+        # 6. 生成Excel文件（新增职位在前）
         all_job_list = list(historical_data['jobs'].values())
-        save_excel_file(all_job_list, EXCEL_FILE, added_jobs=added_jobs)
+        if not save_excel_file(all_job_list, EXCEL_FILE, added_jobs=added_jobs):
+            raise Exception("生成Excel文件失败")
         
         # 7. 生成HTML报告
         html_report = generate_html_report(all_jobs, added_jobs, updated_jobs, total_jobs, expired_count)
         
-        # 8. 发送邮件（附带Excel文件）
-        today = datetime.now().strftime('%Y-%m-%d')
-        subject = f"招聘信息更新报告 {today}"
-        
-        # 更新统计信息
+        # 8. 更新统计信息
         update_crawler_stats(success=True)
         
-        # 检查是否需要发送每周汇总
+        # 9. 邮件发送逻辑
+        today = datetime.now()
+        subject = f"招聘信息更新报告 {today.strftime('%Y-%m-%d')}"
+        
+        # 检查是否是周五且需要发送周报
+        is_friday = today.weekday() == 4  # 4表示周五
         stats = load_crawler_stats()
-        now = datetime.now()
-        is_friday = now.weekday() == 4  # 4表示周五
         
         if is_friday and (not stats['weekly']['last_weekly_report'] or 
-                         (now - datetime.strptime(stats['weekly']['last_weekly_report'], '%Y-%m-%d')).days >= 7):
+                         (today - datetime.strptime(stats['weekly']['last_weekly_report'], '%Y-%m-%d')).days >= 7):
             # 生成并发送每周汇总报告
             weekly_report = generate_weekly_report(stats)
-            send_email("招聘信息周汇总报告", weekly_report, attachment_path=EXCEL_FILE)
+            if not send_email("招聘信息周汇总报告", weekly_report, attachment_path=EXCEL_FILE):
+                logger.error("周报邮件发送失败")
             
             # 更新最后发送周报的时间
-            stats['weekly']['last_weekly_report'] = today
+            stats['weekly']['last_weekly_report'] = today.strftime('%Y-%m-%d')
             save_crawler_stats(stats)
         
         # 发送每日报告（如果有新增或更新）
         if added_jobs or updated_jobs:
+            logger.info("检测到有效更新，准备发送邮件...")
             if not send_email(subject, html_report, attachment_path=EXCEL_FILE):
                 logger.error("邮件发送失败，但数据处理已完成")
         else:
             logger.info("没有新增或更新的职位，不发送每日邮件通知")
         
         logger.info("处理完成!")
+        
     except Exception as e:
         logger.error(f"主程序发生未处理异常: {str(e)}")
         update_crawler_stats(success=False)
         # 尝试发送错误通知邮件
         try:
             error_html = f"<h1>招聘爬虫系统崩溃</h1><p>系统发生未处理异常:</p><pre>{str(e)}</pre>"
-            send_email("招聘爬虫系统崩溃", error_html)
+            send_email("招聘爬虫错误报告", error_html)
         except Exception as email_err:
             logger.error(f"发送错误通知邮件失败: {str(email_err)}")
 
