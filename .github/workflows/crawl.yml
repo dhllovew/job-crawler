@@ -2,7 +2,7 @@ name: Job Crawler and Email Notification
 
 on:
   schedule:
-    # 每天北京时间早上8点运行
+    # 每天北京时间晚上11：30运行
     - cron: '30 15 * * *'
   workflow_dispatch:
 
@@ -32,7 +32,7 @@ jobs:
         sudo apt-get install -y chromium-browser chromium-chromedriver
         
     - name: Run job crawler
-      run: python job_crawler.py
+      run: python crawler_github.py
       
     - name: Upload Excel file as artifact
       uses: actions/upload-artifact@v4
