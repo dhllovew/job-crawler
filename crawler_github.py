@@ -31,6 +31,23 @@ MAX_PAGES_PER_SESSION = 2
 SITE_URL = "https://www.givemeoc.com"
 WAIT_TIME_MIN = 1
 WAIT_TIME_MAX = 3
+# 中文字段名映射
+COLUMN_NAMES_CN = {
+    "company": "公司名称",
+    "company_type": "公司类型",
+    "location": "工作地点",
+    "recruitment_type": "招聘类型",
+    "target": "招聘对象",
+    "position": "职位名称",
+    "update_time": "更新时间",
+    "deadline": "截止时间",
+    "links": "职位链接",
+    "notice": "通知链接",
+    "referral": "内推信息",
+    "notes": "备注",
+    "crawl_time": "爬取时间",
+    "is_new": "是否新增"  # 用于标记新增职位
+}
 
 # 从环境变量获取配置
 EMAIL_USER = os.environ.get('EMAIL_USER')
@@ -206,21 +223,77 @@ def save_historical_data(data):
         logger.error(f"保存数据失败: {str(e)}")
         return False
 
-def save_excel_file(job_list, filename):
-    """将数据保存为Excel文件"""
+def save_excel_file(job_list, filename, added_jobs=None):
+    """
+    保存数据到Excel文件（带中文表头）
+    功能：
+    1. 自动高亮新增职位（黄色背景）
+    2. 自适应列宽
+    3. 冻结首行表头
+    4. 自动识别链接可点击
+    """
     try:
-        logger.info(f"保存Excel文件: {filename}")
-        # 创建DataFrame
+        logger.info(f"正在生成Excel文件: {filename}")
+        
+        # 创建DataFrame并应用中文列名
         df = pd.DataFrame(job_list)
         
-        # 保存为Excel文件
-        df.to_excel(filename, index=False, engine='openpyxl')
-        logger.info(f"成功保存Excel文件: {filename}")
+        # 标记新增职位
+        if added_jobs:
+            added_companies = {job['company'] for job in added_jobs}
+            df['_is_new'] = df['company'].isin(added_companies)  # 临时列
+            
+        # 初始化Excel写入器
+        with pd.ExcelWriter(filename, engine='openpyxl') as writer:
+            df.to_excel(writer, index=False, sheet_name='招聘信息')
+            workbook = writer.book
+            worksheet = writer.sheets['招聘信息']
+            
+            # ===== 高亮新增职位 =====
+            if added_jobs:
+                from openpyxl.styles import PatternFill
+                yellow_fill = PatternFill(start_color="FFFF00", fill_type="solid")
+                
+                # 获取新增职位标记列位置
+                new_col = df.columns.get_loc('_is_new') + 1
+                
+                # 遍历标记为新增的行
+                for row_idx, is_new in enumerate(df['_is_new'], 2):  # 从第2行开始
+                    if is_new:
+                        for col in range(1, len(df.columns) + 1):
+                            worksheet.cell(row=row_idx, column=col).fill = yellow_fill
+                
+                # 删除临时列（通过不写入到Excel实现）
+                worksheet.delete_cols(new_col)
+            
+            # ===== 格式优化 =====
+            # 1. 自适应列宽
+            for col in worksheet.columns:
+                max_length = max(
+                    len(str(cell.value)) * 1.2  # 宽度缓冲
+                    for cell in col
+                )
+                worksheet.column_dimensions[col[0].column_letter].width = min(max_length, 50)  # 最大宽度50
+                
+            # 2. 冻结首行
+            worksheet.freeze_panes = 'A2'
+            
+            # 3. 链接可点击（自动识别含http的列）
+            for col_idx, col_name in enumerate(df.columns, 1):
+                if any(link_keyword in col_name for link_keyword in ['链接', 'url']):
+                    for row_idx in range(2, len(df) + 2):
+                        cell = worksheet.cell(row=row_idx, column=col_idx)
+                        if cell.value and str(cell.value).startswith(('http', 'www')):
+                            cell.hyperlink = cell.value
+                            cell.style = "Hyperlink"
+            
+        logger.info(f"Excel文件已生成: {filename}")
         return True
+        
     except Exception as e:
-        logger.error(f"保存Excel文件失败: {str(e)}")
+        logger.error(f"生成Excel失败: {str(e)}", exc_info=True)
         return False
-
+        
 def clean_expired_jobs(historical_data):
     """清理过期职位（假设历史数据中的每个职位都有deadline字段）"""
     logger.info("开始清理过期职位...")
@@ -481,7 +554,7 @@ def main():
         # 6. 生成Excel文件
         # 将所有职位数据汇总
         all_job_list = list(historical_data['jobs'].values())
-        save_excel_file(all_job_list, EXCEL_FILE)
+        save_excel_file(all_job_list, EXCEL_FILE, added_jobs=added_jobs)
         
         # 7. 生成HTML报告
         html_report = generate_html_report(all_jobs, added_jobs, updated_jobs, total_jobs, expired_count)
