@@ -15,7 +15,6 @@ from email.mime.application import MIMEApplication
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from fake_useragent import UserAgent
-from github import Github
 
 # 配置日志
 logging.basicConfig(
@@ -176,94 +175,50 @@ def safe_get_attr(element, selector, attribute):
         return ""
 
 def load_historical_data():
-    """从GitHub仓库加载历史数据"""
+    """从本地文件加载历史数据"""
     try:
-        logger.info("从GitHub仓库加载历史数据...")
-        g = Github(GITHUB_TOKEN)
-        repo = g.get_repo(REPO_NAME)
-        contents = repo.get_contents(DATA_FILE)
-        data = base64.b64decode(contents.content).decode('utf-8')
-        return json.loads(data)
-    except Exception as e:
-        # 更友好的首次运行提示
-        if "404" in str(e):
-            logger.info("首次运行：尚未找到历史数据文件，将创建新数据集")
+        logger.info("加载历史数据...")
+        if os.path.exists(DATA_FILE):
+            with open(DATA_FILE, 'r', encoding='utf-8') as f:
+                return json.load(f)
         else:
-            logger.warning(f"加载历史数据失败: {str(e)}，将创建新数据集")
+            logger.info("首次运行：尚未找到历史数据文件，将创建新数据集")
+            return {
+                "last_update": None,
+                "jobs": {}
+            }
+    except Exception as e:
+        logger.warning(f"加载历史数据失败: {str(e)}，将创建新数据集")
         return {
             "last_update": None,
             "jobs": {}
         }
 
 def save_historical_data(data):
-    """保存数据到GitHub仓库"""
+    """保存数据到本地文件"""
     try:
-        logger.info("保存数据到GitHub仓库...")
-        g = Github(GITHUB_TOKEN)
-        repo = g.get_repo(REPO_NAME)
-        
-        # 尝试获取现有文件
-        try:
-            contents = repo.get_contents(DATA_FILE)
-            repo.update_file(
-                path=DATA_FILE,
-                message=f"更新招聘数据 {datetime.now().strftime('%Y-%m-%d %H:%M')}",
-                content=json.dumps(data, ensure_ascii=False, indent=2),
-                sha=contents.sha
-            )
-        except:
-            # 文件不存在则创建
-            repo.create_file(
-                path=DATA_FILE,
-                message=f"创建招聘数据存储 {datetime.now().strftime('%Y-%m-%d %H:%M')}",
-                content=json.dumps(data, ensure_ascii=False, indent=2)
-            )
-            
-            logger.info(f"已创建新的数据文件: {DATA_FILE}")
+        logger.info("保存数据到本地...")
+        with open(DATA_FILE, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        logger.info(f"成功保存数据到: {DATA_FILE}")
         return True
     except Exception as e:
-        logger.error(f"保存数据到GitHub失败: {str(e)}")
+        logger.error(f"保存数据失败: {str(e)}")
         return False
 
-def save_excel_to_github(job_list, filename):
-    """将Excel文件保存到GitHub仓库"""
+def save_excel_file(job_list, filename):
+    """将数据保存为Excel文件"""
     try:
-        logger.info(f"保存Excel文件到GitHub: {filename}")
-        g = Github(GITHUB_TOKEN)
-        repo = g.get_repo(REPO_NAME)
-        
+        logger.info(f"保存Excel文件: {filename}")
         # 创建DataFrame
         df = pd.DataFrame(job_list)
         
         # 保存为Excel文件
         df.to_excel(filename, index=False, engine='openpyxl')
-        
-        # 读取文件内容
-        with open(filename, 'rb') as file:
-            content = file.read()
-        content_base64 = base64.b64encode(content).decode('utf-8')
-        
-        # 尝试获取现有文件
-        try:
-            contents = repo.get_contents(filename)
-            repo.update_file(
-                path=filename,
-                message=f"更新招聘Excel文件 {datetime.now().strftime('%Y-%m-%d %H:%M')}",
-                content=content_base64,
-                sha=contents.sha
-            )
-        except:
-            # 文件不存在则创建
-            repo.create_file(
-                path=filename,
-                message=f"创建招聘Excel文件 {datetime.now().strftime('%Y-%m-%d %H:%M')}",
-                content=content_base64
-            )
-        
-        logger.info(f"成功保存Excel文件到GitHub: {filename}")
+        logger.info(f"成功保存Excel文件: {filename}")
         return True
     except Exception as e:
-        logger.error(f"保存Excel文件到GitHub失败: {str(e)}")
+        logger.error(f"保存Excel文件失败: {str(e)}")
         return False
 
 def clean_expired_jobs(historical_data):
@@ -523,10 +478,10 @@ def main():
         # 5. 保存更新后的数据
         save_success = save_historical_data(historical_data)
         
-        # 6. 生成Excel文件并保存到GitHub
+        # 6. 生成Excel文件
         # 将所有职位数据汇总
         all_job_list = list(historical_data['jobs'].values())
-        save_excel_to_github(all_job_list, EXCEL_FILE)
+        save_excel_file(all_job_list, EXCEL_FILE)
         
         # 7. 生成HTML报告
         html_report = generate_html_report(all_jobs, added_jobs, updated_jobs, total_jobs, expired_count)
