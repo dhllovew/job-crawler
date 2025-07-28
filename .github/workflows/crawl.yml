@@ -27,7 +27,7 @@ jobs:
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PWD: ${{ secrets.EMAIL_PWD }}
         run: |
-          python main.py  # 确保文件名正确
+          python crawler_github.py
       
       # 上传爬取结果作为构建产物（可选）
       - name: Upload job data
