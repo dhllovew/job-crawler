@@ -46,9 +46,8 @@ def setup_browser():
     chrome_options.add_argument("--incognito")
     chrome_options.add_argument("--disable-blink-features=AutomationControlled")
     
-    # 随机User-Agent
-    ua = UserAgent()
-    chrome_options.add_argument(f"user-agent={ua.random}")
+    # 明确指定Chromium路径（关键修复）
+    chrome_options.binary_location = "/usr/bin/chromium-browser"  # ← 添加这一行
     
     # 创建浏览器实例
     driver = webdriver.Chrome(options=chrome_options)
@@ -178,7 +177,11 @@ def load_historical_data():
         data = base64.b64decode(contents.content).decode('utf-8')
         return json.loads(data)
     except Exception as e:
-        logger.warning(f"加载历史数据失败，创建新数据集: {str(e)}")
+        # 更友好的首次运行提示
+        if "404" in str(e):
+            logger.info("首次运行：尚未找到历史数据文件，将创建新数据集")
+        else:
+            logger.warning(f"加载历史数据失败，将创建新数据集: {str(e)}")
         return {
             "last_update": None,
             "jobs": {}
