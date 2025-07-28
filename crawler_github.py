@@ -6,9 +6,12 @@ import smtplib
 import base64
 import random
 import re
+import pandas as pd
+import html
 from datetime import datetime, timedelta
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.application import MIMEApplication
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from fake_useragent import UserAgent
@@ -36,6 +39,7 @@ EMAIL_PWD = os.environ.get('EMAIL_PWD')
 GITHUB_TOKEN = os.environ.get('GITHUB_TOKEN')
 REPO_NAME = os.environ.get('REPO_NAME')  # 格式: username/repository
 DATA_FILE = "job_data.json"
+EXCEL_FILE = "job_data.xlsx"
 
 def setup_browser():
     """配置浏览器（GitHub Actions专用）"""
@@ -223,6 +227,47 @@ def save_historical_data(data):
         logger.error(f"保存数据到GitHub失败: {str(e)}")
         return False
 
+def save_excel_to_github(job_list, filename):
+    """将Excel文件保存到GitHub仓库"""
+    try:
+        logger.info(f"保存Excel文件到GitHub: {filename}")
+        g = Github(GITHUB_TOKEN)
+        repo = g.get_repo(REPO_NAME)
+        
+        # 创建DataFrame
+        df = pd.DataFrame(job_list)
+        
+        # 保存为Excel文件
+        df.to_excel(filename, index=False, engine='openpyxl')
+        
+        # 读取文件内容
+        with open(filename, 'rb') as file:
+            content = file.read()
+        content_base64 = base64.b64encode(content).decode('utf-8')
+        
+        # 尝试获取现有文件
+        try:
+            contents = repo.get_contents(filename)
+            repo.update_file(
+                path=filename,
+                message=f"更新招聘Excel文件 {datetime.now().strftime('%Y-%m-%d %H:%M')}",
+                content=content_base64,
+                sha=contents.sha
+            )
+        except:
+            # 文件不存在则创建
+            repo.create_file(
+                path=filename,
+                message=f"创建招聘Excel文件 {datetime.now().strftime('%Y-%m-%d %H:%M')}",
+                content=content_base64
+            )
+        
+        logger.info(f"成功保存Excel文件到GitHub: {filename}")
+        return True
+    except Exception as e:
+        logger.error(f"保存Excel文件到GitHub失败: {str(e)}")
+        return False
+
 def clean_expired_jobs(historical_data):
     """清理过期职位（假设历史数据中的每个职位都有deadline字段）"""
     logger.info("开始清理过期职位...")
@@ -341,7 +386,16 @@ def generate_html_report(all_jobs, added_jobs, updated_jobs, total_jobs, expired
             body {{ font-family: Arial, sans-serif; line-height: 1.6; }}
             .container {{ max-width: 800px; margin: 0 auto; }}
             .stats {{ background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin-bottom: 20px; }}
-            /* 其他样式保持不变... */
+            .section {{ margin-bottom: 30px; }}
+            .section-title {{ border-bottom: 2px solid #3498db; padding-bottom: 5px; }}
+            .job-list {{ list-style: none; padding-left: 0; }}
+            .job-item {{ border: 1px solid #ddd; border-radius: 5px; padding: 15px; margin-bottom: 15px; }}
+            .job-company {{ font-weight: bold; font-size: 18px; }}
+            .job-position {{ font-weight: bold; color: #2c3e50; margin: 5px 0; }}
+            .job-links a {{ margin-right: 10px; color: #3498db; text-decoration: none; }}
+            .new {{ background-color: rgba(46, 204, 113, 0.1); }}
+            .updated {{ background-color: rgba(243, 156, 18, 0.1); }}
+            .footer {{ margin-top: 30px; text-align: center; color: #7f8c8d; }}
         </style>
     </head>
     <body>
@@ -383,6 +437,7 @@ def generate_html_report(all_jobs, added_jobs, updated_jobs, total_jobs, expired
     html_content += """
             <div class="footer">
                 <p>此报告由招聘信息爬虫自动生成</p>
+                <p>附件包含完整的招聘信息Excel文件</p>
             </div>
         </div>
     </body>
@@ -391,7 +446,7 @@ def generate_html_report(all_jobs, added_jobs, updated_jobs, total_jobs, expired
     
     return html_content
 
-def send_email(subject, body):
+def send_email(subject, body, attachment_path=None):
     """发送邮件通知"""
     try:
         # 邮件服务器配置（这里使用QQ邮箱，其他邮箱修改smtp_server）
@@ -404,6 +459,14 @@ def send_email(subject, body):
         msg['To'] = EMAIL_USER  # 发送给自己
         msg['Subject'] = subject
         msg.attach(MIMEText(body, 'html'))
+
+        # 添加附件
+        if attachment_path:
+            with open(attachment_path, 'rb') as f:
+                part = MIMEApplication(f.read(), Name=os.path.basename(attachment_path))
+            part['Content-Disposition'] = f'attachment; filename="{os.path.basename(attachment_path)}"'
+            msg.attach(part)
+            logger.info(f"已添加附件: {attachment_path}")
 
         # 发送邮件
         server = smtplib.SMTP(smtp_server, smtp_port)
@@ -462,12 +525,17 @@ def main():
         # 5. 保存更新后的数据
         save_success = save_historical_data(historical_data)
         
-        # 6. 生成报告
+        # 6. 生成Excel文件并保存到GitHub
+        # 将所有职位数据汇总
+        all_job_list = list(historical_data['jobs'].values())
+        save_excel_to_github(all_job_list, EXCEL_FILE)
+        
+        # 7. 生成HTML报告
         html_report = generate_html_report(all_jobs, added_jobs, updated_jobs, total_jobs, expired_count)
         
-        # 7. 发送邮件
+        # 8. 发送邮件（附带Excel文件）
         subject = f"招聘信息更新报告 {datetime.now().strftime('%Y-%m-%d')}"
-        if not send_email(subject, html_report):
+        if not send_email(subject, html_report, attachment_path=EXCEL_FILE):
             logger.error("邮件发送失败，但数据处理已完成")
         
         logger.info("处理完成!")
