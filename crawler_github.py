@@ -5,7 +5,8 @@ import logging
 import smtplib
 import base64
 import random
-from datetime import datetime
+import re
+from datetime import datetime, timedelta
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from selenium import webdriver
@@ -222,7 +223,217 @@ def save_historical_data(data):
         logger.error(f"保存数据到GitHub失败: {str(e)}")
         return False
 
-# ... 其余函数保持不变 ...
+def clean_expired_jobs(historical_data):
+    """清理过期职位（假设历史数据中的每个职位都有deadline字段）"""
+    logger.info("开始清理过期职位...")
+    current_time = datetime.now()
+    expired_count = 0
+    # 遍历历史数据中的职位
+    for job_id, job in list(historical_data['jobs'].items()):
+        # 如果deadline存在且已过期
+        if job.get('deadline'):
+            # 尝试解析deadline字符串为日期对象
+            try:
+                # 假设deadline格式为"YYYY-MM-DD"
+                deadline_date = datetime.strptime(job['deadline'], '%Y-%m-%d')
+                if deadline_date < current_time:
+                    del historical_data['jobs'][job_id]
+                    expired_count += 1
+            except ValueError:
+                # 如果解析失败，尝试其他格式
+                try:
+                    # 尝试匹配"X天前"格式
+                    match = re.search(r'(\d+)天前', job['deadline'])
+                    if match:
+                        days_ago = int(match.group(1))
+                        deadline_date = current_time - timedelta(days=days_ago)
+                        if deadline_date < current_time:
+                            del historical_data['jobs'][job_id]
+                            expired_count += 1
+                    else:
+                        # 无法解析的格式，保留职位
+                        pass
+                except Exception as e:
+                    logger.warning(f"解析deadline失败: {job['deadline']} - {str(e)}")
+    
+    logger.info(f"清理完成，移除了 {expired_count} 个过期职位")
+    return historical_data, expired_count
+
+def compare_jobs(new_jobs, historical_data):
+    """比较新旧职位数据，识别新增和更新的职位"""
+    logger.info("比较新旧职位数据...")
+    added_jobs = []
+    updated_jobs = []
+    total_jobs = 0
+    
+    # 创建职位唯一标识符的函数
+    def create_job_id(job):
+        """创建职位的唯一标识符"""
+        return f"{job['company']}-{job['position']}-{job['update_time']}"
+    
+    # 处理新爬取的职位
+    for job in new_jobs:
+        job_id = create_job_id(job)
+        
+        if job_id not in historical_data['jobs']:
+            # 新增职位
+            historical_data['jobs'][job_id] = job
+            added_jobs.append(job)
+        else:
+            # 检查职位是否有更新
+            existing_job = historical_data['jobs'][job_id]
+            if existing_job['update_time'] != job['update_time']:
+                # 更新职位信息
+                historical_data['jobs'][job_id] = job
+                updated_jobs.append(job)
+    
+    # 更新最后爬取时间
+    historical_data['last_update'] = datetime.now().isoformat()
+    total_jobs = len(historical_data['jobs'])
+    
+    logger.info(f"发现新增职位: {len(added_jobs)}, 更新职位: {len(updated_jobs)}, 总职位数: {total_jobs}")
+    return added_jobs, updated_jobs, historical_data, total_jobs
+
+def generate_html_report(all_jobs, added_jobs, updated_jobs, total_jobs, expired_count):
+    """生成HTML格式的报告"""
+    logger.info("生成HTML报告...")
+    
+    # HTML头部
+    html = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>招聘信息更新报告</title>
+        <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; }
+            .container { max-width: 800px; margin: 0 auto; }
+            .stats { background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+            .section { margin-bottom: 25px; }
+            .section-title { font-size: 18px; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
+            .job-list { list-style: none; padding: 0; }
+            .job-item { background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 4px; padding: 10px; margin-bottom: 10px; }
+            .job-company { font-weight: bold; color: #2980b9; }
+            .job-position { font-style: italic; }
+            .job-links a { margin-right: 10px; }
+            .new { background-color: #e8f4e4; border-left: 3px solid #2ecc71; }
+            .updated { background-color: #fff8e1; border-left: 3px solid #f39c12; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>招聘信息更新报告</h1>
+            <div class="stats">
+                <p><strong>统计摘要</strong></p>
+                <p>总职位数: {total_jobs}</p>
+                <p>新增职位: {added_count} <span style="color:#2ecc71">(绿色标记)</span></p>
+                <p>更新职位: {updated_count} <span style="color:#f39c12">(橙色标记)</span></p>
+                <p>清理过期职位: {expired_count}</p>
+                <p>报告时间: {report_time}</p>
+            </div>
+    """.format(
+        total_jobs=total_jobs,
+        added_count=len(added_jobs),
+        updated_count=len(updated_jobs),
+        expired_count=expired_count,
+        report_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    )
+    
+    # 新增职位部分
+    if added_jobs:
+        html += """
+            <div class="section">
+                <h2 class="section-title">新增职位 ({})</h2>
+                <ul class="job-list">
+        """.format(len(added_jobs))
+        
+        for job in added_jobs:
+            html += """
+                    <li class="job-item new">
+                        <div class="job-company">{company}</div>
+                        <div class="job-position">{position}</div>
+                        <div>类型: {company_type} | 地点: {location}</div>
+                        <div>招聘类型: {recruitment_type} | 目标: {target}</div>
+                        <div>更新时间: {update_time} | 截止时间: {deadline}</div>
+                        <div class="job-links">
+                            <a href="{links}">职位链接</a>
+                            <a href="{notice}">通知链接</a>
+                        </div>
+                        <div>备注: {notes}</div>
+                    </li>
+            """.format(**job)
+        
+        html += """
+                </ul>
+            </div>
+        """
+    
+    # 更新职位部分
+    if updated_jobs:
+        html += """
+            <div class="section">
+                <h2 class="section-title">更新职位 ({})</h2>
+                <ul class="job-list">
+        """.format(len(updated_jobs))
+        
+        for job in updated_jobs:
+            html += """
+                    <li class="job-item updated">
+                        <div class="job-company">{company}</div>
+                        <div class="job-position">{position}</div>
+                        <div>类型: {company_type} | 地点: {location}</div>
+                        <div>招聘类型: {recruitment_type} | 目标: {target}</div>
+                        <div>更新时间: {update_time} | 截止时间: {deadline}</div>
+                        <div class="job-links">
+                            <a href="{links}">职位链接</a>
+                            <a href="{notice}">通知链接</a>
+                        </div>
+                        <div>备注: {notes}</div>
+                    </li>
+            """.format(**job)
+        
+        html += """
+                </ul>
+            </div>
+        """
+    
+    # HTML尾部
+    html += """
+            <div class="footer">
+                <p>此报告由招聘信息爬虫自动生成</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    return html
+
+def send_email(subject, body):
+    """发送邮件通知"""
+    try:
+        # 邮件服务器配置（这里使用QQ邮箱，其他邮箱修改smtp_server）
+        smtp_server = "smtp.qq.com"
+        smtp_port = 587
+
+        # 创建邮件
+        msg = MIMEMultipart()
+        msg['From'] = EMAIL_USER
+        msg['To'] = EMAIL_USER  # 发送给自己
+        msg['Subject'] = subject
+        msg.attach(MIMEText(body, 'html'))
+
+        # 发送邮件
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()
+        server.login(EMAIL_USER, EMAIL_PWD)
+        server.send_message(msg)
+        server.quit()
+        logger.info("邮件发送成功")
+        return True
+    except Exception as e:
+        logger.error(f"邮件发送失败: {str(e)}")
+        return False
 
 def main():
     """主程序"""
@@ -280,7 +491,12 @@ def main():
         logger.info("处理完成!")
     except Exception as e:
         logger.error(f"主程序发生未处理异常: {str(e)}")
-        send_email("招聘爬虫系统崩溃", f"<h1>系统发生未处理异常</h1><p>{str(e)}</p>")
+        # 尝试发送错误通知邮件
+        try:
+            error_html = f"<h1>招聘爬虫系统崩溃</h1><p>系统发生未处理异常:</p><pre>{str(e)}</pre>"
+            send_email("招聘爬虫系统崩溃", error_html)
+        except Exception as email_err:
+            logger.error(f"发送错误通知邮件失败: {str(email_err)}")
 
 if __name__ == "__main__":
     main()
