@@ -541,43 +541,49 @@ def generate_html_report(all_jobs, added_jobs, updated_jobs, total_jobs, expired
 def send_email(subject, body, attachment_path=None):
     """发送邮件通知（支持多收件人）"""
     try:
-        # 邮件服务器配置（这里使用QQ邮箱示例）
+        # 邮件服务器配置（使用更稳定的SMTP配置）
         smtp_server = "smtp.qq.com"
-        smtp_port = 587
-
+        smtp_port = 465  # 改用SSL端口
+        
         # 创建邮件
         msg = MIMEMultipart()
         msg['From'] = EMAIL_USER
-        msg['To'] = RECEIVER_EMAIL  # 主收件人
-        msg['Cc'] = EMAIL_USER       # 抄送给自己
+        msg['To'] = RECEIVER_EMAIL#收件人
+        msg['Cc'] = EMAIL_USER# 抄送给自己
         msg['Subject'] = subject
         
-        # 支持HTML正文
-        msg.attach(MIMEText(body, 'html'))
+        # HTML正文（确保编码正确）
+        msg.attach(MIMEText(body, 'html', 'utf-8'))
 
-        # 添加附件
+        # 添加附件（如果有）
         if attachment_path and os.path.exists(attachment_path):
-            with open(attachment_path, 'rb') as f:
-                part = MIMEApplication(f.read(), Name=os.path.basename(attachment_path))
-            part['Content-Disposition'] = f'attachment; filename="{os.path.basename(attachment_path)}"'
-            msg.attach(part)
-            logger.info(f"已添加附件: {attachment_path}")
+            try:
+                with open(attachment_path, 'rb') as f:
+                    part = MIMEApplication(f.read(), Name=os.path.basename(attachment_path))
+                part['Content-Disposition'] = f'attachment; filename="{os.path.basename(attachment_path)}"'
+                msg.attach(part)
+                logger.info(f"已添加附件: {attachment_path}")
+            except Exception as attach_error:
+                logger.error(f"添加附件失败: {str(attach_error)}")
+                # 附件失败不阻止邮件发送
 
-        # 发送邮件（同时发给主收件人和抄送地址）
-        with smtplib.SMTP(smtp_server, smtp_port) as server:
-            server.starttls()
+        # 发送邮件（使用更健壮的SMTP连接方式）
+        with smtplib.SMTP_SSL(smtp_server, smtp_port) as server:
             server.login(EMAIL_USER, EMAIL_PWD)
-            server.sendmail(
-                EMAIL_USER,
-                [RECEIVER_EMAIL, EMAIL_USER],  # 同时发送给主收件人和自己
-                msg.as_string()
-            )
-        
-        logger.info(f"邮件已发送至: {RECEIVER_EMAIL} 和 {EMAIL_USER}")
+            server.send_message(msg)  # 使用send_message替代sendmail
+            
+        logger.info(f"邮件成功发送至: {RECEIVER_EMAIL}")
         return True
+        
+    except smtplib.SMTPException as smtp_error:
+        logger.error(f"SMTP协议错误: {str(smtp_error)}")
     except Exception as e:
         logger.error(f"邮件发送失败: {str(e)}")
-        return False
+        # 详细记录错误信息
+        import traceback
+        logger.error(f"完整错误追踪:\n{traceback.format_exc()}")
+    
+    return False
 
 def generate_weekly_report(stats):
     """生成周汇总报告HTML"""
