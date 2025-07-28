@@ -31,27 +31,11 @@ MAX_PAGES_PER_SESSION = 2
 SITE_URL = "https://www.givemeoc.com"
 WAIT_TIME_MIN = 1
 WAIT_TIME_MAX = 3
-# 中文字段名映射
-COLUMN_NAMES_CN = {
-    "company": "公司名称",
-    "company_type": "公司类型",
-    "location": "工作地点",
-    "recruitment_type": "招聘类型",
-    "target": "招聘对象",
-    "position": "职位名称",
-    "update_time": "更新时间",
-    "deadline": "截止时间",
-    "links": "职位链接",
-    "notice": "通知链接",
-    "referral": "内推信息",
-    "notes": "备注",
-    "crawl_time": "爬取时间",
-    "is_new": "是否新增"  # 用于标记新增职位
-}
 
 # 从环境变量获取配置
-EMAIL_USER = os.environ.get('EMAIL_USER')
-EMAIL_PWD = os.environ.get('EMAIL_PWD')
+EMAIL_USER = os.environ.get('EMAIL_USER')#发送邮箱
+EMAIL_PWD = os.environ.get('EMAIL_PWD')#发送邮箱密码
+RECEIVER_EMAIL = "h1952365030@163.com"#接受邮箱
 DATA_FILE = "job_data.json"
 EXCEL_FILE = "job_data.xlsx"
 
@@ -224,74 +208,67 @@ def save_historical_data(data):
         return False
 
 def save_excel_file(job_list, filename, added_jobs=None):
-    """
-    保存数据到Excel文件（带中文表头）
-    功能：
-    1. 自动高亮新增职位（黄色背景）
-    2. 自适应列宽
-    3. 冻结首行表头
-    4. 自动识别链接可点击
-    """
+    """保存Excel文件（自动中文表头+高亮新增）"""
     try:
-        logger.info(f"正在生成Excel文件: {filename}")
+        # --- 1. 中文列名映射 ---
+        CN_HEADERS = {
+            "company": "公司名称",
+            "company_type": "公司类型",
+            "location": "工作地点",
+            "recruitment_type": "招聘类型",
+            "target": "招聘对象",
+            "position": "职位名称",
+            "update_time": "更新时间",
+            "deadline": "截止时间",
+            "links": "职位链接",
+            "notice": "通知链接",
+            "referral": "内推信息",
+            "notes": "备注",
+            "crawl_time": "爬取时间"
+        }
         
-        # 创建DataFrame并应用中文列名
-        df = pd.DataFrame(job_list)
+        # --- 2. 处理数据 ---
+        # 创建DataFrame并重命名列
+        df = pd.DataFrame(job_list).rename(columns=CN_HEADERS)
         
-        # 标记新增职位
+        # 标记新增职位（临时列，完成后删除）
         if added_jobs:
-            added_companies = {job['company'] for job in added_jobs}
-            df['_is_new'] = df['company'].isin(added_companies)  # 临时列
-            
-        # 初始化Excel写入器
+            added_ids = {f"{j['company']}-{j['position']}" for j in added_jobs}
+            df['_is_new'] = df.apply(
+                lambda x: "是" if f"{x['公司名称']}-{x['职位名称']}" in added_ids else "否", 
+                axis=1
+            )
+        
+        # --- 3. 保存Excel ---
         with pd.ExcelWriter(filename, engine='openpyxl') as writer:
             df.to_excel(writer, index=False, sheet_name='招聘信息')
-            workbook = writer.book
+            
+            # 获取工作表对象
             worksheet = writer.sheets['招聘信息']
             
-            # ===== 高亮新增职位 =====
+            # --- 4. 高亮新增职位 ---
             if added_jobs:
                 from openpyxl.styles import PatternFill
                 yellow_fill = PatternFill(start_color="FFFF00", fill_type="solid")
                 
-                # 获取新增职位标记列位置
-                new_col = df.columns.get_loc('_is_new') + 1
+                for row in worksheet.iter_rows(min_row=2):
+                    if row[-1].value == "是":  # 最后一列是临时标记列
+                        for cell in row[:-1]:  # 不处理标记列本身
+                            cell.fill = yellow_fill
                 
-                # 遍历标记为新增的行
-                for row_idx, is_new in enumerate(df['_is_new'], 2):  # 从第2行开始
-                    if is_new:
-                        for col in range(1, len(df.columns) + 1):
-                            worksheet.cell(row=row_idx, column=col).fill = yellow_fill
-                
-                # 删除临时列（通过不写入到Excel实现）
-                worksheet.delete_cols(new_col)
+                # 删除临时列
+                worksheet.delete_cols(worksheet.max_column)
             
-            # ===== 格式优化 =====
-            # 1. 自适应列宽
+            # --- 5. 调整列宽 ---
             for col in worksheet.columns:
-                max_length = max(
-                    len(str(cell.value)) * 1.2  # 宽度缓冲
-                    for cell in col
-                )
-                worksheet.column_dimensions[col[0].column_letter].width = min(max_length, 50)  # 最大宽度50
-                
-            # 2. 冻结首行
-            worksheet.freeze_panes = 'A2'
-            
-            # 3. 链接可点击（自动识别含http的列）
-            for col_idx, col_name in enumerate(df.columns, 1):
-                if any(link_keyword in col_name for link_keyword in ['链接', 'url']):
-                    for row_idx in range(2, len(df) + 2):
-                        cell = worksheet.cell(row=row_idx, column=col_idx)
-                        if cell.value and str(cell.value).startswith(('http', 'www')):
-                            cell.hyperlink = cell.value
-                            cell.style = "Hyperlink"
-            
-        logger.info(f"Excel文件已生成: {filename}")
+                max_len = max(len(str(cell.value)) for cell in col)
+                worksheet.column_dimensions[col[0].column_letter].width = min(max_len + 2, 30)
+        
+        logger.info(f"Excel文件已保存: {filename}")
         return True
         
     except Exception as e:
-        logger.error(f"生成Excel失败: {str(e)}", exc_info=True)
+        logger.error(f"保存Excel失败: {str(e)}")
         return False
         
 def clean_expired_jobs(historical_data):
@@ -473,34 +450,41 @@ def generate_html_report(all_jobs, added_jobs, updated_jobs, total_jobs, expired
     return html_content
 
 def send_email(subject, body, attachment_path=None):
-    """发送邮件通知"""
+    """发送邮件通知（支持多收件人）"""
     try:
-        # 邮件服务器配置（这里使用QQ邮箱，其他邮箱修改smtp_server）
+        # 邮件服务器配置（这里使用QQ邮箱示例）
         smtp_server = "smtp.qq.com"
         smtp_port = 587
 
         # 创建邮件
         msg = MIMEMultipart()
         msg['From'] = EMAIL_USER
-        msg['To'] = EMAIL_USER  # 发送给自己
+        msg['To'] = RECEIVER_EMAIL  # 主收件人
+        msg['Cc'] = EMAIL_USER       # 抄送给自己
         msg['Subject'] = subject
+        
+        # 支持HTML正文
         msg.attach(MIMEText(body, 'html'))
 
         # 添加附件
-        if attachment_path:
+        if attachment_path and os.path.exists(attachment_path):
             with open(attachment_path, 'rb') as f:
                 part = MIMEApplication(f.read(), Name=os.path.basename(attachment_path))
             part['Content-Disposition'] = f'attachment; filename="{os.path.basename(attachment_path)}"'
             msg.attach(part)
             logger.info(f"已添加附件: {attachment_path}")
 
-        # 发送邮件
-        server = smtplib.SMTP(smtp_server, smtp_port)
-        server.starttls()
-        server.login(EMAIL_USER, EMAIL_PWD)
-        server.send_message(msg)
-        server.quit()
-        logger.info("邮件发送成功")
+        # 发送邮件（同时发给主收件人和抄送地址）
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(EMAIL_USER, EMAIL_PWD)
+            server.sendmail(
+                EMAIL_USER,
+                [RECEIVER_EMAIL, EMAIL_USER],  # 同时发送给主收件人和自己
+                msg.as_string()
+            )
+        
+        logger.info(f"邮件已发送至: {RECEIVER_EMAIL} 和 {EMAIL_USER}")
         return True
     except Exception as e:
         logger.error(f"邮件发送失败: {str(e)}")
