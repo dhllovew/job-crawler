@@ -1,5 +1,4 @@
 import os
-import shutil
 import time
 import json
 import logging
@@ -39,79 +38,6 @@ EMAIL_PWD = os.environ.get('EMAIL_PWD')#发送邮箱密码
 RECEIVER_EMAIL = "h1952365030@163.com"#接受邮箱
 DATA_FILE = "job_data.json"
 EXCEL_FILE = "job_data.xlsx"
-STATS_FILE = "crawler_stats.json"  # 统计信息保存文件
-
-# 添加统计函数
-def load_crawler_stats():
-    """加载爬虫统计信息"""
-    try:
-        if os.path.exists(STATS_FILE):
-            with open(STATS_FILE, 'r', encoding='utf-8') as f:
-                stats = json.load(f)
-                # 确保数据结构完整
-                if 'weekly' not in stats:
-                    stats['weekly'] = {
-                        'runs': 0,
-                        'success': 0,
-                        'failures': 0,
-                        'last_weekly_report': None
-                    }
-                return stats
-        return {
-            'daily': {},
-            'weekly': {
-                'runs': 0,
-                'success': 0,
-                'failures': 0,
-                'last_weekly_report': None
-            }
-        }
-    except Exception as e:
-        logger.error(f"加载统计信息失败: {str(e)}")
-        return {
-            'daily': {},
-            'weekly': {
-                'runs': 0,
-                'success': 0,
-                'failures': 0,
-                'last_weekly_report': None
-            }
-        }
-
-def save_crawler_stats(stats):
-    """保存爬虫统计信息"""
-    try:
-        with open(STATS_FILE, 'w', encoding='utf-8') as f:
-            json.dump(stats, f, ensure_ascii=False, indent=2)
-        return True
-    except Exception as e:
-        logger.error(f"保存统计信息失败: {str(e)}")
-        return False
-
-def update_crawler_stats(success=True):
-    """更新爬虫统计信息"""
-    stats = load_crawler_stats()
-    today = datetime.now().strftime('%Y-%m-%d')
-    
-    # 更新每日统计
-    if today not in stats['daily']:
-        stats['daily'][today] = {'runs': 0, 'success': 0, 'failures': 0}
-    
-    stats['daily'][today]['runs'] += 1
-    if success:
-        stats['daily'][today]['success'] += 1
-    else:
-        stats['daily'][today]['failures'] += 1
-    
-    # 更新每周统计
-    stats['weekly']['runs'] += 1
-    if success:
-        stats['weekly']['success'] += 1
-    else:
-        stats['weekly']['failures'] += 1
-    
-    save_crawler_stats(stats)
-
 
 def setup_browser():
     """配置浏览器（GitHub Actions专用）"""
@@ -270,59 +196,19 @@ def load_historical_data():
         }
 
 def save_historical_data(data):
-    """改进的数据保存函数（确保同步到GitHub）"""
+    """保存数据到本地文件"""
     try:
-        logger.info("保存数据到本地并同步到GitHub...")
-        
-        # 1. 备份旧数据（如果有）
-        if os.path.exists(DATA_FILE):
-            timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-            backup_file = f"{DATA_FILE}.bak.{timestamp}"
-            shutil.copy2(DATA_FILE, backup_file)
-            logger.info(f"已创建备份文件: {backup_file}")
-        
-        # 2. 保存新数据
+        logger.info("保存数据到本地...")
         with open(DATA_FILE, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
-        
-        # 3. 提交到GitHub（通过Git命令）
-        try:
-            # 设置Git用户信息
-            os.system('git config --global user.email "actions@github.com"')
-            os.system('git config --global user.name "GitHub Actions"')
-            
-            # 添加、提交和推送更改
-            os.system('git add job_data.json')
-            commit_message = f"Update job data {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
-            os.system(f'git commit -m "{commit_message}"')
-            os.system('git push')
-            logger.info("数据已成功提交到GitHub仓库")
-        except Exception as git_error:
-            logger.error(f"Git提交失败: {str(git_error)}")
-            # 不是致命错误，继续执行
-        
-        # 4. 验证保存是否成功
-        with open(DATA_FILE, 'r', encoding='utf-8') as f:
-            saved_data = json.load(f)
-            if len(saved_data['jobs']) != len(data['jobs']):
-                raise ValueError("保存后数据不一致")
-        
-        logger.info(f"成功保存数据到: {DATA_FILE} (包含 {len(data['jobs'])} 条职位记录)")
+        logger.info(f"成功保存数据到: {DATA_FILE}")
         return True
-        
     except Exception as e:
         logger.error(f"保存数据失败: {str(e)}")
-        # 尝试恢复备份
-        if 'backup_file' in locals():
-            try:
-                shutil.copy2(backup_file, DATA_FILE)
-                logger.info("已从备份恢复数据文件")
-            except Exception as restore_error:
-                logger.error(f"恢复备份失败: {str(restore_error)}")
         return False
 
 def save_excel_file(job_list, filename, added_jobs=None):
-    """保存Excel文件（自动中文表头+高亮新增+新增职位在前）"""
+    """保存Excel文件（自动中文表头+高亮新增）"""
     try:
         # --- 1. 中文列名映射 ---
         CN_HEADERS = {
@@ -342,32 +228,16 @@ def save_excel_file(job_list, filename, added_jobs=None):
         }
         
         # --- 2. 处理数据 ---
-        # 如果有新增职位，先排序（新增职位在前）
+        # 创建DataFrame并重命名列
+        df = pd.DataFrame(job_list).rename(columns=CN_HEADERS)
+        
+        # 标记新增职位（临时列，完成后删除）
         if added_jobs:
             added_ids = {f"{j['company']}-{j['position']}" for j in added_jobs}
-            
-            # 为每个职位添加排序键（新增职位为0，其他为1）
-            for job in job_list:
-                job['_sort_key'] = 0 if f"{job['company']}-{job['position']}" in added_ids else 1
-            
-            # 按排序键排序
-            job_list.sort(key=lambda x: x['_sort_key'])
-            
-            # 创建DataFrame并重命名列
-            df = pd.DataFrame(job_list).rename(columns=CN_HEADERS)
-            
-            # 标记新增职位（临时列，完成后删除）
             df['_is_new'] = df.apply(
-                lambda x: "是" if x['_sort_key'] == 0 else "否", 
+                lambda x: "是" if f"{x['公司名称']}-{x['职位名称']}" in added_ids else "否", 
                 axis=1
             )
-            
-            # 删除临时排序列
-            df = df.drop(columns=['_sort_key'])
-        else:
-            # 没有新增职位，直接创建DataFrame
-            df = pd.DataFrame(job_list).rename(columns=CN_HEADERS)
-            df['_is_new'] = "否"
         
         # --- 3. 保存Excel ---
         with pd.ExcelWriter(filename, engine='openpyxl') as writer:
@@ -438,35 +308,32 @@ def clean_expired_jobs(historical_data):
     return historical_data, expired_count
 
 def compare_jobs(new_jobs, historical_data):
-    """改进的职位比较函数"""
+    """比较新旧职位数据，识别新增和更新的职位"""
     logger.info("比较新旧职位数据...")
     added_jobs = []
     updated_jobs = []
+    total_jobs = 0
     
-    # 改进的职位ID生成方式
+    # 创建职位唯一标识符的函数
     def create_job_id(job):
-        """更可靠的职位唯一标识符"""
-        # 使用公司+职位+地点+更新日期作为ID
-        return f"{job['company']}_{job['position']}_{job['location']}_{job['update_time'].split('T')[0]}".replace("/", "-")
+        """创建职位的唯一标识符"""
+        return f"{job['company']}-{job['position']}-{job['update_time']}"
     
     # 处理新爬取的职位
     for job in new_jobs:
         job_id = create_job_id(job)
         
-        # 检查是否为新职位
         if job_id not in historical_data['jobs']:
             # 新增职位
             historical_data['jobs'][job_id] = job
             added_jobs.append(job)
-            logger.debug(f"新增职位: {job_id}")
         else:
-            # 检查是否有更新
+            # 检查职位是否有更新
             existing_job = historical_data['jobs'][job_id]
-            if existing_job != job:  # 完整比较所有字段
+            if existing_job['update_time'] != job['update_time']:
                 # 更新职位信息
                 historical_data['jobs'][job_id] = job
                 updated_jobs.append(job)
-                logger.debug(f"更新职位: {job_id}")
     
     # 更新最后爬取时间
     historical_data['last_update'] = datetime.now().isoformat()
@@ -583,21 +450,21 @@ def generate_html_report(all_jobs, added_jobs, updated_jobs, total_jobs, expired
     return html_content
 
 def send_email(subject, body, attachment_path=None):
-    """改进的邮件发送函数（解决误报问题）"""
+    """发送邮件通知（支持多收件人）"""
     try:
-        # 邮件服务器配置
+        # 邮件服务器配置（这里使用QQ邮箱示例）
         smtp_server = "smtp.qq.com"
-        smtp_port = 465
-        
+        smtp_port = 587
+
         # 创建邮件
         msg = MIMEMultipart()
         msg['From'] = EMAIL_USER
-        msg['To'] = RECEIVER_EMAIL
-        msg['Cc'] = EMAIL_USER  # 抄送给自己
+        msg['To'] = RECEIVER_EMAIL  # 主收件人
+        msg['Cc'] = EMAIL_USER       # 抄送给自己
         msg['Subject'] = subject
         
-        # 邮件正文（HTML格式）
-        msg.attach(MIMEText(body, 'html', 'utf-8'))
+        # 支持HTML正文
+        msg.attach(MIMEText(body, 'html'))
 
         # 添加附件
         if attachment_path and os.path.exists(attachment_path):
@@ -607,131 +474,45 @@ def send_email(subject, body, attachment_path=None):
             msg.attach(part)
             logger.info(f"已添加附件: {attachment_path}")
 
-        # 收件人列表（主送+抄送）
-        recipients = [RECEIVER_EMAIL, EMAIL_USER]
-        
-        # 发送邮件（使用SMTP_SSL）
-        with smtplib.SMTP_SSL(smtp_server, smtp_port) as server:
+        # 发送邮件（同时发给主收件人和抄送地址）
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
             server.login(EMAIL_USER, EMAIL_PWD)
-            server.sendmail(EMAIL_USER, recipients, msg.as_string())
+            server.sendmail(
+                EMAIL_USER,
+                [RECEIVER_EMAIL, EMAIL_USER],  # 同时发送给主收件人和自己
+                msg.as_string()
+            )
         
-        logger.info(f"邮件成功发送至: {RECEIVER_EMAIL} (抄送: {EMAIL_USER})")
+        logger.info(f"邮件已发送至: {RECEIVER_EMAIL} 和 {EMAIL_USER}")
         return True
-        
-    except smtplib.SMTPException as e:
-        # 捕获特定错误代码
-        if hasattr(e, 'smtp_code') and e.smtp_code in (250,):
-            logger.info(f"邮件实际发送成功，但报告了SMTP协议错误: {str(e)}")
-            return True
-        logger.error(f"SMTP协议错误: {str(e)}")
     except Exception as e:
         logger.error(f"邮件发送失败: {str(e)}")
-    
-    return False
-
-def generate_weekly_report(stats):
-    """生成周汇总报告HTML"""
-    logger.info("生成周汇总报告...")
-    
-    # 计算本周数据
-    today = datetime.now()
-    week_start = (today - timedelta(days=today.weekday())).strftime('%Y-%m-%d')
-    week_end = (today + timedelta(days=(6 - today.weekday()))).strftime('%Y-%m-%d')
-    
-    # 获取本周每日数据
-    weekly_data = []
-    for date_str, data in stats['daily'].items():
-        date = datetime.strptime(date_str, '%Y-%m-%d')
-        if (today - date).days <= today.weekday() and date <= today:
-            weekly_data.append((date_str, data))
-    
-    # 按日期排序
-    weekly_data.sort(key=lambda x: x[0])
-    
-    # 构建HTML
-    html_content = f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>招聘信息周汇总报告</title>
-        <style>
-            body {{ font-family: Arial, sans-serif; line-height: 1.6; }}
-            .container {{ max-width: 800px; margin: 0 auto; }}
-            .stats {{ background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin-bottom: 20px; }}
-            .section {{ margin-bottom: 30px; }}
-            .section-title {{ border-bottom: 2px solid #3498db; padding-bottom: 5px; }}
-            .daily-stats {{ border: 1px solid #ddd; border-radius: 5px; padding: 10px; margin-bottom: 10px; }}
-            .success {{ color: #2ecc71; }}
-            .failure {{ color: #e74c3c; }}
-            .footer {{ margin-top: 30px; text-align: center; color: #7f8c8d; }}
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>招聘信息周汇总报告</h1>
-            <div class="stats">
-                <p><strong>统计摘要 ({week_start} 至 {week_end})</strong></p>
-                <p>本周运行次数: {stats['weekly']['runs']}</p>
-                <p>成功次数: <span class="success">{stats['weekly']['success']}</span></p>
-                <p>失败次数: <span class="failure">{stats['weekly']['failures']}</span></p>
-                <p>成功率: {round(stats['weekly']['success'] / stats['weekly']['runs'] * 100, 2) if stats['weekly']['runs'] > 0 else 0}%</p>
-                <p>报告时间: {today.strftime('%Y-%m-%d %H:%M:%S')}</p>
-            </div>
-    """
-    
-    # 添加每日详细统计
-    html_content += """
-        <div class="section">
-            <h2 class="section-title">每日运行详情</h2>
-    """
-    
-    for date_str, data in weekly_data:
-        html_content += f"""
-            <div class="daily-stats">
-                <p><strong>{date_str}</strong></p>
-                <p>运行次数: {data['runs']}</p>
-                <p>成功: <span class="success">{data['success']}</span></p>
-                <p>失败: <span class="failure">{data['failures']}</span></p>
-            </div>
-        """
-    
-    # HTML尾部
-    html_content += """
-            <div class="footer">
-                <p>此报告由招聘信息爬虫自动生成</p>
-                <p>附件包含最新的招聘信息Excel文件</p>
-            </div>
-        </div>
-    </body>
-    </html>
-    """
-    
-    return html_content
+        return False
 
 def main():
-    """主程序（完整修复版）"""
+    """主程序"""
     logger.info(f"开始爬取招聘信息，时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
     try:
-        # 1. 加载历史数据（自动处理首次运行情况）
+        # 1. 加载历史数据
         historical_data = load_historical_data()
-        if not historical_data['jobs']:
-            logger.info("首次运行：创建新的数据集")
         
         # 2. 爬取新数据
         all_jobs = []
         current_start_page = START_PAGE
         driver = setup_browser()
         
+        # 循环爬取直到达到目标页数
         while current_start_page <= END_PAGE:
-            logger.info(f"开始爬取第 {current_start_page} 页...")
+            logger.info(f"开始新的浏览器会话，从第 {current_start_page} 页开始爬取...")
             data, last_page = crawl_job_data(driver, current_start_page, END_PAGE)
             all_jobs.extend(data)
+            logger.info(f"本次会话爬取了 {len(data)} 条数据")
             current_start_page = last_page + 1
             
             if current_start_page <= END_PAGE:
-                logger.info("等待5秒后继续...")
+                logger.info("等待5秒后开始新的会话...")
                 time.sleep(5)
         
         driver.quit()
@@ -739,7 +520,6 @@ def main():
         if not all_jobs:
             logger.error("没有爬取到任何数据")
             send_email("招聘信息爬取失败", "<h1>招聘信息爬取失败</h1><p>本次爬取未获取到任何数据</p>")
-            update_crawler_stats(success=False)
             return
         
         logger.info(f"共爬取 {len(all_jobs)} 条职位信息")
@@ -747,53 +527,34 @@ def main():
         # 3. 清理过期职位
         historical_data, expired_count = clean_expired_jobs(historical_data)
         
-        # 4. 对比新旧数据（改进后的比较函数）
+        # 4. 对比新旧数据
         added_jobs, updated_jobs, historical_data, total_jobs = compare_jobs(all_jobs, historical_data)
+        
         logger.info(f"新增职位: {len(added_jobs)}, 更新职位: {len(updated_jobs)}, 总职位数: {total_jobs}")
         
-        # 5. 保存数据到本地并同步到GitHub
-        if not save_historical_data(historical_data):
-            raise Exception("保存数据失败")
+        # 5. 保存更新后的数据
+        save_success = save_historical_data(historical_data)
         
-        # 6. 生成Excel文件（新增职位在前）
+        # 6. 生成Excel文件
+        # 将所有职位数据汇总
         all_job_list = list(historical_data['jobs'].values())
-        if not save_excel_file(all_job_list, EXCEL_FILE, added_jobs=added_jobs):
-            raise Exception("生成Excel文件失败")
+        save_excel_file(all_job_list, EXCEL_FILE, added_jobs=added_jobs)
         
         # 7. 生成HTML报告
         html_report = generate_html_report(all_jobs, added_jobs, updated_jobs, total_jobs, expired_count)
         
-        # 8. 更新统计信息
-        update_crawler_stats(success=True)
-        
-        # 9. 邮件发送逻辑
-        today = datetime.now().strftime('%Y-%m-%d')
-        subject = f"招聘信息更新报告 {today}"
-        
-        # 检查是否需要发送每周汇总
-        stats = load_crawler_stats()
-        if today.endswith('5'):  # 每周五发送周报
-            weekly_report = generate_weekly_report(stats)
-            send_email("招聘信息周汇总报告", weekly_report, attachment_path=EXCEL_FILE)
-            stats['weekly']['last_weekly_report'] = today
-            save_crawler_stats(stats)
-        
-        # 发送每日报告（如果有新增或更新）
-        if added_jobs or updated_jobs:
-            logger.info("检测到有效更新，准备发送邮件...")
-            if not send_email(subject, html_report, attachment_path=EXCEL_FILE):
-                logger.info("邮件可能已发送成功，但报告了非致命错误")
-        else:
-            logger.info("没有新增或更新的职位，不发送每日邮件通知")
+        # 8. 发送邮件（附带Excel文件）
+        subject = f"招聘信息更新报告 {datetime.now().strftime('%Y-%m-%d')}"
+        if not send_email(subject, html_report, attachment_path=EXCEL_FILE):
+            logger.error("邮件发送失败，但数据处理已完成")
         
         logger.info("处理完成!")
-        
     except Exception as e:
         logger.error(f"主程序发生未处理异常: {str(e)}")
-        update_crawler_stats(success=False)
+        # 尝试发送错误通知邮件
         try:
-            error_html = f"<h1>招聘爬虫系统错误</h1><p>错误详情:</p><pre>{str(e)}</pre>"
-            send_email("招聘爬虫系统错误", error_html)
+            error_html = f"<h1>招聘爬虫系统崩溃</h1><p>系统发生未处理异常:</p><pre>{str(e)}</pre>"
+            send_email("招聘爬虫系统崩溃", error_html)
         except Exception as email_err:
             logger.error(f"发送错误通知邮件失败: {str(email_err)}")
 
