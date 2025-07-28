@@ -114,7 +114,7 @@ EMAIL_PWD: ${{ secrets.EMAIL_PWD }}
 run: python job_crawler.py
 ```
 
-** 仓库Secrets配置**
+**仓库Secrets配置**
 | Secret名称| 描述|
 |---------------|-------------------------------|
 | EMAIL_USER| 发件邮箱地址|
@@ -127,7 +127,7 @@ run: python job_crawler.py
 - 更新职位列表（橙色高亮）
 - Excel附件（完整数据）
 
-** 📂 项目结构**
+**📂项目结构**
 
 ```
 job-crawler/
