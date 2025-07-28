@@ -38,4 +38,4 @@ jobs:
           export PATH=$PATH:/usr/bin/chromium-browser
           
           # 运行爬虫脚本
-          python src/crawler_github.py
+          python crawler_github.py
