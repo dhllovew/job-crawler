@@ -2,7 +2,7 @@ name: Job Crawler
 
 on:
   schedule:
-    - cron: '0 9 * * *'  # 每天UTC时间9:00运行（北京时间17:00）
+    - cron: '30 15 * * *'  # 每天UTC时间9:00运行（北京时间17:00）
   workflow_dispatch:     # 允许手动触发
 
 jobs:
