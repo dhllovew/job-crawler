@@ -36,8 +36,6 @@ WAIT_TIME_MAX = 3
 # 从环境变量获取配置
 EMAIL_USER = os.environ.get('EMAIL_USER')
 EMAIL_PWD = os.environ.get('EMAIL_PWD')
-GITHUB_TOKEN = os.environ.get('GITHUB_TOKEN')
-REPO_NAME = os.environ.get('REPO_NAME')  # 格式: username/repository
 DATA_FILE = "job_data.json"
 EXCEL_FILE = "job_data.xlsx"
 
