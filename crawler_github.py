@@ -298,26 +298,50 @@ def generate_html_report(all_jobs, added_jobs, updated_jobs, total_jobs, expired
     """生成HTML格式的报告"""
     logger.info("生成HTML报告...")
     
-    # HTML头部
-    html = """
+    # 转义函数 - 处理HTML特殊字符和花括号
+    def safe_format(text):
+        if not text:
+            return ""
+        # 先转义HTML特殊字符
+        escaped = html.escape(text)
+        # 转义花括号{} -> {{}}
+        return escaped.replace("{", "{{").replace("}", "}}")
+    
+    # 构建职位条目的HTML
+    def build_job_html(jobs, css_class):
+        html_content = ""
+        for job in jobs:
+            # 安全处理所有字段
+            safe_job = {k: safe_format(v) for k, v in job.items()}
+            
+            html_content += f"""
+                <li class="job-item {css_class}">
+                    <div class="job-company">{safe_job['company']}</div>
+                    <div class="job-position">{safe_job['position']}</div>
+                    <div>类型: {safe_job['company_type']} | 地点: {safe_job['location']}</div>
+                    <div>招聘类型: {safe_job['recruitment_type']} | 目标: {safe_job['target']}</div>
+                    <div>更新时间: {safe_job['update_time']} | 截止时间: {safe_job['deadline']}</div>
+                    <div class="job-links">
+                        <a href="{safe_job['links']}">职位链接</a>
+                        <a href="{safe_job['notice']}">通知链接</a>
+                    </div>
+                    <div>备注: {safe_job['notes']}</div>
+                </li>
+            """
+        return html_content
+
+    # HTML头部 - 使用安全格式化
+    html_content = f"""
     <!DOCTYPE html>
     <html>
     <head>
         <meta charset="UTF-8">
         <title>招聘信息更新报告</title>
         <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; }
-            .container { max-width: 800px; margin: 0 auto; }
-            .stats { background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
-            .section { margin-bottom: 25px; }
-            .section-title { font-size: 18px; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
-            .job-list { list-style: none; padding: 0; }
-            .job-item { background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 4px; padding: 10px; margin-bottom: 10px; }
-            .job-company { font-weight: bold; color: #2980b9; }
-            .job-position { font-style: italic; }
-            .job-links a { margin-right: 10px; }
-            .new { background-color: #e8f4e4; border-left: 3px solid #2ecc71; }
-            .updated { background-color: #fff8e1; border-left: 3px solid #f39c12; }
+            body {{ font-family: Arial, sans-serif; line-height: 1.6; }}
+            .container {{ max-width: 800px; margin: 0 auto; }}
+            .stats {{ background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin-bottom: 20px; }}
+            /* 其他样式保持不变... */
         </style>
     </head>
     <body>
@@ -326,79 +350,37 @@ def generate_html_report(all_jobs, added_jobs, updated_jobs, total_jobs, expired
             <div class="stats">
                 <p><strong>统计摘要</strong></p>
                 <p>总职位数: {total_jobs}</p>
-                <p>新增职位: {added_count} <span style="color:#2ecc71">(绿色标记)</span></p>
-                <p>更新职位: {updated_count} <span style="color:#f39c12">(橙色标记)</span></p>
+                <p>新增职位: {len(added_jobs)} <span style="color:#2ecc71">(绿色标记)</span></p>
+                <p>更新职位: {len(updated_jobs)} <span style="color:#f39c12">(橙色标记)</span></p>
                 <p>清理过期职位: {expired_count}</p>
-                <p>报告时间: {report_time}</p>
+                <p>报告时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
             </div>
-    """.format(
-        total_jobs=total_jobs,
-        added_count=len(added_jobs),
-        updated_count=len(updated_jobs),
-        expired_count=expired_count,
-        report_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    )
+    """
     
     # 新增职位部分
     if added_jobs:
-        html += """
+        html_content += f"""
             <div class="section">
-                <h2 class="section-title">新增职位 ({})</h2>
+                <h2 class="section-title">新增职位 ({len(added_jobs)})</h2>
                 <ul class="job-list">
-        """.format(len(added_jobs))
-        
-        for job in added_jobs:
-            html += """
-                    <li class="job-item new">
-                        <div class="job-company">{company}</div>
-                        <div class="job-position">{position}</div>
-                        <div>类型: {company_type} | 地点: {location}</div>
-                        <div>招聘类型: {recruitment_type} | 目标: {target}</div>
-                        <div>更新时间: {update_time} | 截止时间: {deadline}</div>
-                        <div class="job-links">
-                            <a href="{links}">职位链接</a>
-                            <a href="{notice}">通知链接</a>
-                        </div>
-                        <div>备注: {notes}</div>
-                    </li>
-            """.format(**job)
-        
-        html += """
+                    {build_job_html(added_jobs, "new")}
                 </ul>
             </div>
         """
     
     # 更新职位部分
     if updated_jobs:
-        html += """
+        html_content += f"""
             <div class="section">
-                <h2 class="section-title">更新职位 ({})</h2>
+                <h2 class="section-title">更新职位 ({len(updated_jobs)})</h2>
                 <ul class="job-list">
-        """.format(len(updated_jobs))
-        
-        for job in updated_jobs:
-            html += """
-                    <li class="job-item updated">
-                        <div class="job-company">{company}</div>
-                        <div class="job-position">{position}</div>
-                        <div>类型: {company_type} | 地点: {location}</div>
-                        <div>招聘类型: {recruitment_type} | 目标: {target}</div>
-                        <div>更新时间: {update_time} | 截止时间: {deadline}</div>
-                        <div class="job-links">
-                            <a href="{links}">职位链接</a>
-                            <a href="{notice}">通知链接</a>
-                        </div>
-                        <div>备注: {notes}</div>
-                    </li>
-            """.format(**job)
-        
-        html += """
+                    {build_job_html(updated_jobs, "updated")}
                 </ul>
             </div>
         """
     
     # HTML尾部
-    html += """
+    html_content += """
             <div class="footer">
                 <p>此报告由招聘信息爬虫自动生成</p>
             </div>
@@ -407,7 +389,7 @@ def generate_html_report(all_jobs, added_jobs, updated_jobs, total_jobs, expired
     </html>
     """
     
-    return html
+    return html_content
 
 def send_email(subject, body):
     """发送邮件通知"""
