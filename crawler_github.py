@@ -38,6 +38,79 @@ EMAIL_PWD = os.environ.get('EMAIL_PWD')#发送邮箱密码
 RECEIVER_EMAIL = "h1952365030@163.com"#接受邮箱
 DATA_FILE = "job_data.json"
 EXCEL_FILE = "job_data.xlsx"
+STATS_FILE = "crawler_stats.json"  # 统计信息保存文件
+
+# 添加统计函数
+def load_crawler_stats():
+    """加载爬虫统计信息"""
+    try:
+        if os.path.exists(STATS_FILE):
+            with open(STATS_FILE, 'r', encoding='utf-8') as f:
+                stats = json.load(f)
+                # 确保数据结构完整
+                if 'weekly' not in stats:
+                    stats['weekly'] = {
+                        'runs': 0,
+                        'success': 0,
+                        'failures': 0,
+                        'last_weekly_report': None
+                    }
+                return stats
+        return {
+            'daily': {},
+            'weekly': {
+                'runs': 0,
+                'success': 0,
+                'failures': 0,
+                'last_weekly_report': None
+            }
+        }
+    except Exception as e:
+        logger.error(f"加载统计信息失败: {str(e)}")
+        return {
+            'daily': {},
+            'weekly': {
+                'runs': 0,
+                'success': 0,
+                'failures': 0,
+                'last_weekly_report': None
+            }
+        }
+
+def save_crawler_stats(stats):
+    """保存爬虫统计信息"""
+    try:
+        with open(STATS_FILE, 'w', encoding='utf-8') as f:
+            json.dump(stats, f, ensure_ascii=False, indent=2)
+        return True
+    except Exception as e:
+        logger.error(f"保存统计信息失败: {str(e)}")
+        return False
+
+def update_crawler_stats(success=True):
+    """更新爬虫统计信息"""
+    stats = load_crawler_stats()
+    today = datetime.now().strftime('%Y-%m-%d')
+    
+    # 更新每日统计
+    if today not in stats['daily']:
+        stats['daily'][today] = {'runs': 0, 'success': 0, 'failures': 0}
+    
+    stats['daily'][today]['runs'] += 1
+    if success:
+        stats['daily'][today]['success'] += 1
+    else:
+        stats['daily'][today]['failures'] += 1
+    
+    # 更新每周统计
+    stats['weekly']['runs'] += 1
+    if success:
+        stats['weekly']['success'] += 1
+    else:
+        stats['weekly']['failures'] += 1
+    
+    save_crawler_stats(stats)
+
 
 def setup_browser():
     """配置浏览器（GitHub Actions专用）"""
@@ -208,7 +281,7 @@ def save_historical_data(data):
         return False
 
 def save_excel_file(job_list, filename, added_jobs=None):
-    """保存Excel文件（自动中文表头+高亮新增）"""
+    """保存Excel文件（自动中文表头+高亮新增+新增职位在前）"""
     try:
         # --- 1. 中文列名映射 ---
         CN_HEADERS = {
@@ -228,16 +301,32 @@ def save_excel_file(job_list, filename, added_jobs=None):
         }
         
         # --- 2. 处理数据 ---
-        # 创建DataFrame并重命名列
-        df = pd.DataFrame(job_list).rename(columns=CN_HEADERS)
-        
-        # 标记新增职位（临时列，完成后删除）
+        # 如果有新增职位，先排序（新增职位在前）
         if added_jobs:
             added_ids = {f"{j['company']}-{j['position']}" for j in added_jobs}
+            
+            # 为每个职位添加排序键（新增职位为0，其他为1）
+            for job in job_list:
+                job['_sort_key'] = 0 if f"{job['company']}-{job['position']}" in added_ids else 1
+            
+            # 按排序键排序
+            job_list.sort(key=lambda x: x['_sort_key'])
+            
+            # 创建DataFrame并重命名列
+            df = pd.DataFrame(job_list).rename(columns=CN_HEADERS)
+            
+            # 标记新增职位（临时列，完成后删除）
             df['_is_new'] = df.apply(
-                lambda x: "是" if f"{x['公司名称']}-{x['职位名称']}" in added_ids else "否", 
+                lambda x: "是" if x['_sort_key'] == 0 else "否", 
                 axis=1
             )
+            
+            # 删除临时排序列
+            df = df.drop(columns=['_sort_key'])
+        else:
+            # 没有新增职位，直接创建DataFrame
+            df = pd.DataFrame(job_list).rename(columns=CN_HEADERS)
+            df['_is_new'] = "否"
         
         # --- 3. 保存Excel ---
         with pd.ExcelWriter(filename, engine='openpyxl') as writer:
@@ -490,6 +579,86 @@ def send_email(subject, body, attachment_path=None):
         logger.error(f"邮件发送失败: {str(e)}")
         return False
 
+def generate_weekly_report(stats):
+    """生成周汇总报告HTML"""
+    logger.info("生成周汇总报告...")
+    
+    # 计算本周数据
+    today = datetime.now()
+    week_start = (today - timedelta(days=today.weekday())).strftime('%Y-%m-%d')
+    week_end = (today + timedelta(days=(6 - today.weekday()))).strftime('%Y-%m-%d')
+    
+    # 获取本周每日数据
+    weekly_data = []
+    for date_str, data in stats['daily'].items():
+        date = datetime.strptime(date_str, '%Y-%m-%d')
+        if (today - date).days <= today.weekday() and date <= today:
+            weekly_data.append((date_str, data))
+    
+    # 按日期排序
+    weekly_data.sort(key=lambda x: x[0])
+    
+    # 构建HTML
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>招聘信息周汇总报告</title>
+        <style>
+            body {{ font-family: Arial, sans-serif; line-height: 1.6; }}
+            .container {{ max-width: 800px; margin: 0 auto; }}
+            .stats {{ background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin-bottom: 20px; }}
+            .section {{ margin-bottom: 30px; }}
+            .section-title {{ border-bottom: 2px solid #3498db; padding-bottom: 5px; }}
+            .daily-stats {{ border: 1px solid #ddd; border-radius: 5px; padding: 10px; margin-bottom: 10px; }}
+            .success {{ color: #2ecc71; }}
+            .failure {{ color: #e74c3c; }}
+            .footer {{ margin-top: 30px; text-align: center; color: #7f8c8d; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>招聘信息周汇总报告</h1>
+            <div class="stats">
+                <p><strong>统计摘要 ({week_start} 至 {week_end})</strong></p>
+                <p>本周运行次数: {stats['weekly']['runs']}</p>
+                <p>成功次数: <span class="success">{stats['weekly']['success']}</span></p>
+                <p>失败次数: <span class="failure">{stats['weekly']['failures']}</span></p>
+                <p>成功率: {round(stats['weekly']['success'] / stats['weekly']['runs'] * 100, 2) if stats['weekly']['runs'] > 0 else 0}%</p>
+                <p>报告时间: {today.strftime('%Y-%m-%d %H:%M:%S')}</p>
+            </div>
+    """
+    
+    # 添加每日详细统计
+    html_content += """
+        <div class="section">
+            <h2 class="section-title">每日运行详情</h2>
+    """
+    
+    for date_str, data in weekly_data:
+        html_content += f"""
+            <div class="daily-stats">
+                <p><strong>{date_str}</strong></p>
+                <p>运行次数: {data['runs']}</p>
+                <p>成功: <span class="success">{data['success']}</span></p>
+                <p>失败: <span class="failure">{data['failures']}</span></p>
+            </div>
+        """
+    
+    # HTML尾部
+    html_content += """
+            <div class="footer">
+                <p>此报告由招聘信息爬虫自动生成</p>
+                <p>附件包含最新的招聘信息Excel文件</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    return html_content
+
 def main():
     """主程序"""
     logger.info(f"开始爬取招聘信息，时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -520,6 +689,7 @@ def main():
         if not all_jobs:
             logger.error("没有爬取到任何数据")
             send_email("招聘信息爬取失败", "<h1>招聘信息爬取失败</h1><p>本次爬取未获取到任何数据</p>")
+            update_crawler_stats(success=False)
             return
         
         logger.info(f"共爬取 {len(all_jobs)} 条职位信息")
@@ -536,7 +706,6 @@ def main():
         save_success = save_historical_data(historical_data)
         
         # 6. 生成Excel文件
-        # 将所有职位数据汇总
         all_job_list = list(historical_data['jobs'].values())
         save_excel_file(all_job_list, EXCEL_FILE, added_jobs=added_jobs)
         
@@ -544,13 +713,38 @@ def main():
         html_report = generate_html_report(all_jobs, added_jobs, updated_jobs, total_jobs, expired_count)
         
         # 8. 发送邮件（附带Excel文件）
-        subject = f"招聘信息更新报告 {datetime.now().strftime('%Y-%m-%d')}"
-        if not send_email(subject, html_report, attachment_path=EXCEL_FILE):
-            logger.error("邮件发送失败，但数据处理已完成")
+        today = datetime.now().strftime('%Y-%m-%d')
+        subject = f"招聘信息更新报告 {today}"
+        
+        # 更新统计信息
+        update_crawler_stats(success=True)
+        
+        # 检查是否需要发送每周汇总
+        stats = load_crawler_stats()
+        now = datetime.now()
+        is_friday = now.weekday() == 4  # 4表示周五
+        
+        if is_friday and (not stats['weekly']['last_weekly_report'] or 
+                         (now - datetime.strptime(stats['weekly']['last_weekly_report'], '%Y-%m-%d')).days >= 7):
+            # 生成并发送每周汇总报告
+            weekly_report = generate_weekly_report(stats)
+            send_email("招聘信息周汇总报告", weekly_report, attachment_path=EXCEL_FILE)
+            
+            # 更新最后发送周报的时间
+            stats['weekly']['last_weekly_report'] = today
+            save_crawler_stats(stats)
+        
+        # 发送每日报告（如果有新增或更新）
+        if added_jobs or updated_jobs:
+            if not send_email(subject, html_report, attachment_path=EXCEL_FILE):
+                logger.error("邮件发送失败，但数据处理已完成")
+        else:
+            logger.info("没有新增或更新的职位，不发送每日邮件通知")
         
         logger.info("处理完成!")
     except Exception as e:
         logger.error(f"主程序发生未处理异常: {str(e)}")
+        update_crawler_stats(success=False)
         # 尝试发送错误通知邮件
         try:
             error_html = f"<h1>招聘爬虫系统崩溃</h1><p>系统发生未处理异常:</p><pre>{str(e)}</pre>"
