@@ -53,7 +53,7 @@ jobs:
 
     - name: Upload artifacts
       if: always()  # 即使失败也上传
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: job-data
         path: |
