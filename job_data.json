@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-07-29T15:47:48.121342",
+  "last_update": "2025-07-29T15:51:12.515794",
   "jobs": {
     "兰州北方机电-技术员-2025-07-28": {
       "company": "兰州北方机电",
@@ -2895,6 +2895,21 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-07-29T15:46:49.535355"
+    },
+    "--": {
+      "company": "",
+      "company_type": "",
+      "location": "",
+      "recruitment_type": "",
+      "target": "",
+      "position": "",
+      "update_time": "",
+      "deadline": "",
+      "links": "",
+      "notice": "",
+      "referral": "",
+      "notes": "",
+      "crawl_time": "2025-07-29T15:50:19.331753"
     }
   }
 }
