@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-07-31T13:36:20.041719",
+  "last_update": "2025-07-31T13:51:47.314954",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -96,22 +96,6 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-07-31T13:09:24.825976"
-    },
-    "富而德律师事务所-法律实习生": {
-      "job_type": "实习",
-      "company": "富而德律师事务所",
-      "company_type": "民企",
-      "location": "北京 上海",
-      "recruitment_type": "暑假实习",
-      "target": "2025年毕业生",
-      "position": "法律实习生",
-      "update_time": "2025-07-30",
-      "deadline": "招满为止",
-      "links": "https://mp.weixin.qq.com/s/GAwPJmjxJ5kTtTqMrRqQPg",
-      "notice": "https://mp.weixin.qq.com/s/GAwPJmjxJ5kTtTqMrRqQPg",
-      "referral": "-",
-      "notes": "-",
-      "crawl_time": "2025-07-31T13:09:24.977602"
     },
     "宝点数字-销售实习生,研发实习生,产品实习生": {
       "job_type": "实习",
@@ -4769,5 +4753,6 @@
       "notes": "-",
       "crawl_time": "2025-07-31T13:36:19.977176"
     }
-  }
+  },
+  "last_clean_time": "2025-07-31T13:49:58.044380"
 }
