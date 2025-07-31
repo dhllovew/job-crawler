@@ -23,10 +23,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# 配置常量
+# 配置常量（核心修改：总页数6，每次爬2页）
 START_PAGE = 1
-END_PAGE = 6
-MAX_PAGES_PER_SESSION = 2
+END_PAGE = 6  # 目标总页数
+MAX_PAGES_PER_SESSION = 2  # 每次会话最多爬2页
 SITE_URL = "https://www.givemeoc.com"  # 校招岗位
 SITE_URL_INTERNSHIP = "https://www.givemeoc.com/internship"  # 实习岗位
 WAIT_TIME_MIN = 1
@@ -35,7 +35,7 @@ WAIT_TIME_MAX = 3
 # 从环境变量获取配置
 EMAIL_USER = os.environ.get('EMAIL_USER')  # 发送邮箱
 EMAIL_PWD = os.environ.get('EMAIL_PWD')  # 发送邮箱密码
-RECEIVER_EMAILS = os.environ.get('RECEIVER_EMAILS').split(';')  # 多个接收邮箱（分号分隔）
+RECEIVER_EMAILS = os.environ.get('RECEIVER_EMAILS', '').split(';')  # 多个接收邮箱（分号分隔）
 
 # 为两类岗位创建独立的存储文件
 DATA_FILE_CAMPUS = "campus_jobs.json"  # 校招数据文件
@@ -44,7 +44,7 @@ EXCEL_FILE_CAMPUS = "campus_jobs.xlsx"  # 校招Excel
 EXCEL_FILE_INTERNSHIP = "intern_jobs.xlsx"  # 实习Excel
 
 def setup_browser():
-    """配置浏览器（GitHub Actions专用）"""
+    """配置浏览器（每次会话重新初始化）"""
     chrome_options = Options()
     chrome_options.add_argument('--headless')
     chrome_options.add_argument('--no-sandbox')
@@ -53,10 +53,10 @@ def setup_browser():
     chrome_options.add_argument("--incognito")
     chrome_options.add_argument("--disable-blink-features=AutomationControlled")
     
-    # 关键修复：明确指定Chromium路径
+    # 明确指定Chromium路径（GitHub Actions专用）
     chrome_options.binary_location = "/usr/bin/chromium-browser"
     
-    # 随机User-Agent
+    # 随机User-Agent（每次会话不同）
     ua = UserAgent()
     chrome_options.add_argument(f"user-agent={ua.random}")
     
@@ -72,36 +72,32 @@ def setup_browser():
     return driver
 
 def crawl_campus_data(driver, site_url, start_page, end_page):
-    """
-    专门爬取校招站点数据
-    注意：以下选择器需要根据实际页面结构调整
-    """
+    """爬取校招数据（支持动态start_page）"""
     try:
-        # 访问校招网站
         driver.get(site_url)
         time.sleep(random.uniform(WAIT_TIME_MIN, WAIT_TIME_MAX))
         
-        # 如果起始页不是第一页，跳转到指定页
+        # 跳转到起始页（如果不是第1页）
         if start_page > 1:
             try:
-                logger.info(f"跳转到第 {start_page} 页...")
-                # TODO: 根据实际页面结构调整选择器
+                logger.info(f"跳转到校招第 {start_page} 页...")
+                # TODO: 替换为实际分页输入框选择器
                 page_input = driver.find_element("css selector", "input.crt-page-input")
                 page_input.clear()
                 page_input.send_keys(str(start_page))
 
-                # TODO: 根据实际页面结构调整选择器
+                # TODO: 替换为实际“跳转”按钮选择器
                 go_button = driver.find_element("css selector", "button.crt-page-go-btn")
                 driver.execute_script("arguments[0].click();", go_button)
                 time.sleep(random.gauss(3, 1))
             except Exception as e:
-                logger.error(f"跳转到第 {start_page} 页时出错: {e}")
+                logger.error(f"校招跳转到第 {start_page} 页失败: {e}")
                 return [], start_page - 1
 
         crawled_data = []
         current_page = start_page
 
-        # 爬取指定页数的数据
+        # 本次会话爬取2页（start_page到start_page+1）
         for page in range(start_page, min(end_page + 1, start_page + MAX_PAGES_PER_SESSION)):
             logger.info(f"正在爬取校招第 {page} 页...")
             current_page = page
@@ -110,12 +106,12 @@ def crawl_campus_data(driver, site_url, start_page, end_page):
             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             time.sleep(random.uniform(1, 2))
 
-            # 解析数据 - TODO: 根据实际页面结构调整选择器
+            # 解析数据（TODO: 替换为实际职位列表选择器）
             job_items = driver.find_elements("css selector", "table.crt-table tbody tr")
 
             for item in job_items:
                 try:
-                    # 以下选择器需要根据实际校招页面结构调整
+                    # TODO: 替换为实际列选择器
                     company = safe_get_text(item, "td.crt-col-company")
                     company_type = safe_get_text(item, "td.crt-col-type")
                     location = safe_get_text(item, "td.crt-col-location")
@@ -130,7 +126,7 @@ def crawl_campus_data(driver, site_url, start_page, end_page):
                     notes = safe_get_text(item, "td.crt-col-notes")
 
                     crawled_data.append({
-                        "job_type": "校招",  # 固定为校招类型
+                        "job_type": "校招",
                         "company": company,
                         "company_type": company_type,
                         "location": location,
@@ -146,65 +142,57 @@ def crawl_campus_data(driver, site_url, start_page, end_page):
                         "crawl_time": datetime.now().isoformat()
                     })
                 except Exception as e:
-                    logger.warning(f"处理校招数据行时出错: {e}")
+                    logger.warning(f"处理校招数据行失败: {e}")
                     continue
 
-            # 校招翻页逻辑
+            # 翻到下一页（如果不是本次会话最后一页）
             if page < min(end_page, start_page + MAX_PAGES_PER_SESSION - 1):
                 try:
-                    # TODO: 根据实际校招页面结构调整选择器
+                    # TODO: 替换为实际分页输入框选择器
                     page_input = driver.find_element("css selector", "input.crt-page-input")
                     page_input.clear()
                     page_input.send_keys(str(page + 1))
 
-                    # TODO: 根据实际校招页面结构调整选择器
+                    # TODO: 替换为实际“跳转”按钮选择器
                     go_button = driver.find_element("css selector", "button.crt-page-go-btn")
                     driver.execute_script("arguments[0].click();", go_button)
                     time.sleep(random.gauss(3, 1))
-                    
-                    # 更新User-Agent
-                    new_ua = UserAgent().random
-                    driver.execute_script(f"navigator.userAgent = '{new_ua}';")
                 except Exception as e:
-                    logger.warning(f"校招翻页时出错，可能已到达最后一页: {e}")
+                    logger.warning(f"校招翻页失败，可能已到最后一页: {e}")
                     break
 
         return crawled_data, current_page
     except Exception as e:
-        logger.error(f"爬取校招数据过程中发生错误: {e}")
+        logger.error(f"校招爬取失败: {e}")
         return [], start_page
 
 def crawl_internship_data(driver, site_url, start_page, end_page):
-    """
-    专门爬取实习站点数据
-    注意：以下选择器需要根据实际页面结构调整
-    """
+    """爬取实习数据（支持动态start_page）"""
     try:
-        # 访问实习网站
         driver.get(site_url)
         time.sleep(random.uniform(WAIT_TIME_MIN, WAIT_TIME_MAX))
         
-        # 如果起始页不是第一页，跳转到指定页
+        # 跳转到起始页（如果不是第1页）
         if start_page > 1:
             try:
-                logger.info(f"跳转到第 {start_page} 页...")
-                # TODO: 根据实际实习页面结构调整选择器
+                logger.info(f"跳转到实习第 {start_page} 页...")
+                # TODO: 替换为实际分页输入框选择器
                 page_input = driver.find_element("css selector", "input.int-page-input")
                 page_input.clear()
                 page_input.send_keys(str(start_page))
 
-                # TODO: 根据实际实习页面结构调整选择器
+                # TODO: 替换为实际“跳转”按钮选择器
                 go_button = driver.find_element("css selector", "button.int-page-go-btn")
                 driver.execute_script("arguments[0].click();", go_button)
                 time.sleep(random.gauss(3, 1))
             except Exception as e:
-                logger.error(f"跳转到第 {start_page} 页时出错: {e}")
+                logger.error(f"实习跳转到第 {start_page} 页失败: {e}")
                 return [], start_page - 1
 
         crawled_data = []
         current_page = start_page
 
-        # 爬取指定页数的数据
+        # 本次会话爬取2页（start_page到start_page+1）
         for page in range(start_page, min(end_page + 1, start_page + MAX_PAGES_PER_SESSION)):
             logger.info(f"正在爬取实习第 {page} 页...")
             current_page = page
@@ -213,12 +201,12 @@ def crawl_internship_data(driver, site_url, start_page, end_page):
             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             time.sleep(random.uniform(1, 2))
 
-            # 解析数据 - TODO: 根据实际实习页面结构调整选择器
+            # 解析数据（TODO: 替换为实际职位列表选择器）
             job_items = driver.find_elements("css selector", "table.int-table tbody tr")
 
             for item in job_items:
                 try:
-                    # 以下选择器需要根据实际实习页面结构调整
+                    # TODO: 替换为实际列选择器
                     company = safe_get_text(item, "td.int-col-company")
                     company_type = safe_get_text(item, "td.int-col-type")
                     location = safe_get_text(item, "td.int-col-location")
@@ -233,7 +221,7 @@ def crawl_internship_data(driver, site_url, start_page, end_page):
                     notes = safe_get_text(item, "td.int-col-notes")
 
                     crawled_data.append({
-                        "job_type": "实习",  # 固定为实习类型
+                        "job_type": "实习",
                         "company": company,
                         "company_type": company_type,
                         "location": location,
@@ -249,32 +237,28 @@ def crawl_internship_data(driver, site_url, start_page, end_page):
                         "crawl_time": datetime.now().isoformat()
                     })
                 except Exception as e:
-                    logger.warning(f"处理实习数据行时出错: {e}")
+                    logger.warning(f"处理实习数据行失败: {e}")
                     continue
 
-            # 实习翻页逻辑
+            # 翻到下一页（如果不是本次会话最后一页）
             if page < min(end_page, start_page + MAX_PAGES_PER_SESSION - 1):
                 try:
-                    # TODO: 根据实际实习页面结构调整选择器
+                    # TODO: 替换为实际分页输入框选择器
                     page_input = driver.find_element("css selector", "input.int-page-input")
                     page_input.clear()
                     page_input.send_keys(str(page + 1))
 
-                    # TODO: 根据实际实习页面结构调整选择器
+                    # TODO: 替换为实际“跳转”按钮选择器
                     go_button = driver.find_element("css selector", "button.int-page-go-btn")
                     driver.execute_script("arguments[0].click();", go_button)
                     time.sleep(random.gauss(3, 1))
-                    
-                    # 更新User-Agent
-                    new_ua = UserAgent().random
-                    driver.execute_script(f"navigator.userAgent = '{new_ua}';")
                 except Exception as e:
-                    logger.warning(f"实习翻页时出错，可能已到达最后一页: {e}")
+                    logger.warning(f"实习翻页失败，可能已到最后一页: {e}")
                     break
 
         return crawled_data, current_page
     except Exception as e:
-        logger.error(f"爬取实习数据过程中发生错误: {e}")
+        logger.error(f"实习爬取失败: {e}")
         return [], start_page
 
 def safe_get_text(element, selector):
@@ -292,41 +276,32 @@ def safe_get_attr(element, selector, attribute):
         return ""
 
 def load_historical_data(data_file):
-    """从指定文件加载历史数据"""
+    """加载历史数据"""
     try:
-        logger.info(f"加载历史数据: {data_file}")
         if os.path.exists(data_file):
             with open(data_file, 'r', encoding='utf-8') as f:
                 return json.load(f)
         else:
-            logger.info(f"首次运行：尚未找到历史数据文件 {data_file}")
-            return {
-                "last_update": None,
-                "jobs": {}
-            }
+            logger.info(f"首次运行，创建新数据文件: {data_file}")
+            return {"last_update": None, "jobs": {}}
     except Exception as e:
-        logger.warning(f"加载历史数据失败: {str(e)}，将创建新数据集")
-        return {
-            "last_update": None,
-            "jobs": {}
-        }
+        logger.warning(f"加载历史数据失败，创建新数据集: {e}")
+        return {"last_update": None, "jobs": {}}
 
 def save_historical_data(data, data_file):
-    """保存数据到指定文件"""
+    """保存数据到本地"""
     try:
-        logger.info(f"保存数据到本地: {data_file}")
         with open(data_file, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
-        logger.info(f"成功保存数据到: {data_file}")
+        logger.info(f"数据已保存到: {data_file}")
         return True
     except Exception as e:
-        logger.error(f"保存数据失败: {str(e)}")
+        logger.error(f"保存数据失败: {e}")
         return False
 
 def save_excel_file(job_list, filename, added_jobs=None):
-    """保存Excel文件（自动中文表头+高亮新增）"""
+    """保存Excel文件（带新增高亮）"""
     try:
-        # --- 1. 中文列名映射 ---
         CN_HEADERS = {
             "company": "公司名称",
             "company_type": "公司类型",
@@ -343,11 +318,8 @@ def save_excel_file(job_list, filename, added_jobs=None):
             "crawl_time": "爬取时间"
         }
         
-        # --- 2. 处理数据 ---
-        # 创建DataFrame并重命名列
         df = pd.DataFrame(job_list).rename(columns=CN_HEADERS)
         
-        # 标记新增职位（临时列，完成后删除）
         if added_jobs:
             added_ids = {f"{j['company']}-{j['position']}" for j in added_jobs}
             df['_is_new'] = df.apply(
@@ -355,214 +327,72 @@ def save_excel_file(job_list, filename, added_jobs=None):
                 axis=1
             )
         
-        # --- 3. 保存Excel ---
         with pd.ExcelWriter(filename, engine='openpyxl') as writer:
             df.to_excel(writer, index=False, sheet_name='招聘信息')
-            
-            # 获取工作表对象
             worksheet = writer.sheets['招聘信息']
             
-            # --- 4. 高亮新增职位 ---
             if added_jobs:
                 from openpyxl.styles import PatternFill
                 yellow_fill = PatternFill(start_color="FFFF00", fill_type="solid")
                 
                 for row in worksheet.iter_rows(min_row=2):
-                    if row[-1].value == "是":  # 最后一列是临时标记列
-                        for cell in row[:-1]:  # 不处理标记列本身
+                    if row[-1].value == "是":
+                        for cell in row[:-1]:
                             cell.fill = yellow_fill
-                
-                # 删除临时列
                 worksheet.delete_cols(worksheet.max_column)
             
-            # --- 5. 调整列宽 ---
             for col in worksheet.columns:
                 max_len = max(len(str(cell.value)) for cell in col)
                 worksheet.column_dimensions[col[0].column_letter].width = min(max_len + 2, 30)
         
-        logger.info(f"Excel文件已保存: {filename}")
+        logger.info(f"Excel已保存: {filename}")
         return True
-        
     except Exception as e:
-        logger.error(f"保存Excel失败: {str(e)}")
+        logger.error(f"保存Excel失败: {e}")
         return False
-        
+
 def clean_expired_jobs(historical_data):
-    """清理过期职位（假设历史数据中的每个职位都有deadline字段）"""
+    """清理过期职位"""
     logger.info("开始清理过期职位...")
     current_time = datetime.now()
     expired_count = 0
-    # 遍历历史数据中的职位
     for job_id, job in list(historical_data['jobs'].items()):
-        # 如果deadline存在且已过期
         if job.get('deadline'):
-            # 尝试解析deadline字符串为日期对象
             try:
-                # 假设deadline格式为"YYYY-MM-DD"
                 deadline_date = datetime.strptime(job['deadline'], "%Y-%m-%d")
                 if deadline_date < current_time:
                     del historical_data['jobs'][job_id]
                     expired_count += 1
-                    logger.info(f"已删除到期职位: {job['company']} - {job['position']} (截止时间: {job['deadline']})")
-            except Exception as e:
-                logger.warning("招满即止")
+            except:
                 continue
-    logger.info(f"清理完成，共删除 {expired_count} 个过期职位")
+    logger.info(f"清理完成，删除 {expired_count} 个过期职位")
     return historical_data
 
-
-# 添加生成精美HTML邮件的函数
 def generate_email_html(new_jobs, job_type):
-    """生成美观的HTML邮件内容"""
-    # CSS样式
+    """生成美化的HTML邮件内容"""
     styles = """
     <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            line-height: 1.6; 
-            color: #333; 
-            max-width: 800px; 
-            margin: 0 auto; 
-            padding: 20px; 
-            background-color: #f5f7fa; 
-        }
-        .header { 
-            background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
-            color: white; 
-            padding: 20px; 
-            border-radius: 8px 8px 0 0;
-            text-align: center;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .header h1 { 
-            margin: 0; 
-            font-weight: 600;
-            font-size: 24px;
-        }
-        .notification-card {
-            background: white;
-            border-radius: 8px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            border: 1px solid #eaeaea;
-        }
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-        .stat-item {
-            background: #f0f5ff;
-            padding: 15px;
-            border-radius: 8px;
-            flex: 1;
-            margin: 0 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .stat-item span {
-            display: block;
-            font-size: 28px;
-            font-weight: bold;
-            color: #4b6cb7;
-            margin-bottom: 5px;
-        }
-        .job-list {
-            border-collapse: collapse;
-            width: 100%;
-        }
-        .job-item {
-            background-color: #fff;
-            border-left: 4px solid #4b6cb7;
-            margin-bottom: 15px;
-            padding: 15px;
-            border-radius: 0 6px 6px 0;
-            transition: all 0.3s ease;
-        }
-        .job-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(75, 108, 183, 0.15);
-        }
-        .company {
-            font-weight: bold;
-            color: #2c3e50;
-            font-size: 18px;
-            margin-bottom: 5px;
-        }
-        .position {
-            font-weight: 600;
-            color: #4b6cb7;
-            font-size: 16px;
-            margin: 10px 0;
-        }
-        .meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin: 10px 0;
-            color: #555;
-            font-size: 14px;
-        }
-        .meta span {
-            display: flex;
-            align-items: center;
-        }
-        .meta span:before {
-            content: "•";
-            margin-right: 5px;
-            color: #4b6cb7;
-        }
-        .deadline {
-            background-color: #fff9e6;
-            color: #e67e22;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-weight: 600;
-            display: inline-block;
-            margin-top: 5px;
-        }
-        .links a {
-            display: inline-block;
-            background: #4b6cb7;
-            color: white !important;
-            text-decoration: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            margin-top: 10px;
-            font-weight: 500;
-            transition: background 0.3s;
-        }
-        .links a:hover {
-            background: #3a559f;
-            text-decoration: none;
-        }
-        .notes {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-left: 3px solid #4b6cb7;
-            font-size: 14px;
-            color: #555;
-        }
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            color: #777;
-            font-size: 13px;
-            padding: 15px;
-            border-top: 1px solid #eee;
-        }
-        .highlight {
-            background: linear-gradient(120deg, #e0f7fa 0%, #bbdefb 100%);
-            padding: 2px 5px;
-            border-radius: 3px;
-        }
+        body { font-family: 'Segoe UI', sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; background: #f5f7fa; }
+        .header { background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%); color: white; padding: 20px; border-radius: 8px 8px 0 0; text-align: center; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .header h1 { margin: 0; font-weight: 600; font-size: 24px; }
+        .notification-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: 1px solid #eaeaea; }
+        .stats { display: flex; justify-content: space-around; margin-bottom: 25px; text-align: center; }
+        .stat-item { background: #f0f5ff; padding: 15px; border-radius: 8px; flex: 1; margin: 0 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .stat-item span { display: block; font-size: 28px; font-weight: bold; color: #4b6cb7; margin-bottom: 5px; }
+        .job-item { background: #fff; border-left: 4px solid #4b6cb7; margin-bottom: 15px; padding: 15px; border-radius: 0 6px 6px 0; transition: all 0.3s ease; }
+        .job-item:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(75, 108, 183, 0.15); }
+        .company { font-weight: bold; color: #2c3e50; font-size: 18px; margin-bottom: 5px; }
+        .position { font-weight: 600; color: #4b6cb7; font-size: 16px; margin: 10px 0; }
+        .meta { display: flex; flex-wrap: wrap; gap: 15px; margin: 10px 0; color: #555; font-size: 14px; }
+        .meta span:before { content: "•"; margin-right: 5px; color: #4b6cb7; }
+        .deadline { background: #fff9e6; color: #e67e22; padding: 5px 10px; border-radius: 4px; font-weight: 600; display: inline-block; margin-top: 5px; }
+        .links a { display: inline-block; background: #4b6cb7; color: white; text-decoration: none; padding: 8px 15px; border-radius: 4px; margin-top: 10px; transition: background 0.3s; }
+        .links a:hover { background: #3a559f; }
+        .notes { margin-top: 10px; padding: 10px; background: #f8f9fa; border-left: 3px solid #4b6cb7; font-size: 14px; color: #555; }
+        .footer { text-align: center; margin-top: 30px; color: #777; font-size: 13px; padding: 15px; border-top: 1px solid #eee; }
     </style>
     """
     
-    # 构建HTML内容
     html_content = f"""
     <!DOCTYPE html>
     <html>
@@ -595,17 +425,10 @@ def generate_email_html(new_jobs, job_type):
             <div class="job-list">
     """
     
-    # 添加每个职位的信息
     for job in new_jobs:
         deadline = job.get('deadline', '截止时间待定')
-        links_html = ""
-        if job.get('links'):
-            links_html = f'<div class="links"><a href="{job["links"]}" target="_blank">查看职位详情</a></div>'
-        
-        # 处理职位亮点
-        notes = job.get('notes', '')
-        if notes:
-            notes = f'<div class="notes">💡 职位亮点: {html.escape(notes)}</div>'
+        links_html = f'<div class="links"><a href="{job["links"]}" target="_blank">查看职位详情</a></div>' if job.get('links') else ""
+        notes = f'<div class="notes">💡 职位亮点: {html.escape(job.get("notes", ""))}</div>' if job.get('notes') else ""
         
         html_content += f"""
         <div class="job-item">
@@ -622,30 +445,25 @@ def generate_email_html(new_jobs, job_type):
         </div>
         """
     
-    # 页脚
     html_content += f"""
             </div>
         </div>
-        
         <div class="footer">
-            <p>此邮件由自动爬虫系统生成 | 抓取时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+            <p>自动爬虫系统生成 | 抓取时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
             <p>© {datetime.now().year} 职位监控系统 | 共发现 {len(new_jobs)} 个新职位</p>
         </div>
     </body>
     </html>
     """
-    
     return html_content
-        
+
 def send_email(subject, body, attachment_paths=None):
-    """
-    发送邮件通知（支持多附件和多接收邮箱）
-    :param subject: 邮件主题
-    :param body: 邮件正文内容
-    :param attachment_paths: 附件路径列表(可选)
-    :return: 发送是否成功
-    """
+    """发送邮件通知"""
     try:
+        if not EMAIL_USER or not EMAIL_PWD or not RECEIVER_EMAILS:
+            logger.warning("邮件配置不完整，跳过发送")
+            return False
+            
         smtp_server = "smtp.qq.com"
         smtp_port = 587
 
@@ -653,11 +471,8 @@ def send_email(subject, body, attachment_paths=None):
         msg['From'] = EMAIL_USER
         msg['To'] = ", ".join(RECEIVER_EMAILS)
         msg['Subject'] = subject
-        
-        # 添加HTML格式的邮件正文
         msg.attach(MIMEText(body, 'html'))
 
-        # 添加附件
         if attachment_paths:
             for path in attachment_paths:
                 if os.path.exists(path):
@@ -666,7 +481,6 @@ def send_email(subject, body, attachment_paths=None):
                     part['Content-Disposition'] = f'attachment; filename="{os.path.basename(path)}"'
                     msg.attach(part)
 
-        # 发送邮件
         with smtplib.SMTP(smtp_server, smtp_port) as server:
             server.starttls()
             server.login(EMAIL_USER, EMAIL_PWD)
@@ -675,93 +489,89 @@ def send_email(subject, body, attachment_paths=None):
         logger.info(f"邮件已发送至: {', '.join(RECEIVER_EMAILS)}")
         return True
     except Exception as e:
-        logger.error(f"邮件发送失败: {str(e)}")
+        logger.error(f"邮件发送失败: {e}")
         return False
 
 def process_site(site_name, site_url, data_file, excel_file):
-    """处理单个站点的爬取和更新逻辑"""
-    logger.info(f"处理站点: {site_name}")
+    """处理单个站点（循环爬取1-6页，每次2页）"""
+    logger.info(f"开始处理 {site_name} 站点（1-{END_PAGE}页，每次2页）")
     
-    # 初始化浏览器
-    driver = setup_browser()
-    
-    # 加载历史数据
+    # 加载历史数据（首次为空）
     historical_data = load_historical_data(data_file)
-    
-    # 爬取新数据
-    if "校招" in site_name:
-        new_jobs, last_page = crawl_campus_data(driver, site_url, START_PAGE, END_PAGE)
-    else:
-        new_jobs, last_page = crawl_internship_data(driver, site_url, START_PAGE, END_PAGE)
-    
-    logger.info(f"共爬取到 {len(new_jobs)} 条新职位信息")
-    
-    # 关闭浏览器
-    driver.quit()
-    
-    # 检测新职位
-    added_jobs = []
     existing_jobs = historical_data.get("jobs", {})
+    all_new_jobs = []  # 累积所有会话的新职位
     
-    for job in new_jobs:
-        # 使用公司+职位作为唯一ID
-        job_id = f"{job['company']}-{job['position']}"
+    # 循环爬取：每次2页，直到覆盖1-6页
+    current_start_page = START_PAGE
+    while current_start_page <= END_PAGE:
+        # 每次会话重新初始化浏览器（关键：避免连续会话被收费）
+        driver = setup_browser()
         
-        # 如果是新职位
-        if job_id not in existing_jobs:
-            added_jobs.append(job)
-            existing_jobs[job_id] = job
-            logger.info(f"发现新职位: {job['company']} - {job['position']}")
+        # 本次会话爬取的页数范围（如1-2、3-4、5-6）
+        current_end_page = min(current_start_page + MAX_PAGES_PER_SESSION - 1, END_PAGE)
+        logger.info(f"=== 开始第 {current_start_page}-{current_end_page} 页爬取 ===")
+        
+        # 调用对应爬取函数（校招/实习）
+        if "校招" in site_name:
+            new_jobs, last_page = crawl_campus_data(driver, site_url, current_start_page, current_end_page)
+        else:
+            new_jobs, last_page = crawl_internship_data(driver, site_url, current_start_page, current_end_page)
+        
+        # 关闭当前浏览器（完成本次会话）
+        driver.quit()
+        
+        # 处理本次会话的新职位
+        for job in new_jobs:
+            job_id = f"{job['company']}-{job['position']}"
+            if job_id not in existing_jobs:
+                all_new_jobs.append(job)
+                existing_jobs[job_id] = job
+                logger.info(f"发现新职位: {job['company']} - {job['position']}")
+        
+        # 更新下一次爬取的起始页
+        current_start_page = last_page + 1
+        logger.info(f"=== 完成第 {current_start_page - MAX_PAGES_PER_SESSION}-{last_page} 页爬取 ===")
+        
+        # 爬取间隔（模拟人类操作间隔）
+        if current_start_page <= END_PAGE:
+            sleep_time = random.uniform(5, 10)  # 5-10秒间隔
+            logger.info(f"等待 {sleep_time:.1f} 秒后开始下一次爬取...")
+            time.sleep(sleep_time)
     
-    # 更新历史数据
+    # 全部爬取完成后，更新历史数据
     historical_data["jobs"] = existing_jobs
     historical_data["last_update"] = datetime.now().isoformat()
-    
-    # 清理过期职位
-    historical_data = clean_expired_jobs(historical_data)
-    
-    # 保存更新后的数据
+    historical_data = clean_expired_jobs(historical_data)  # 清理过期职位
     save_historical_data(historical_data, data_file)
     
-    # 准备邮件内容
-    email_body = f"""
-    <h2>{site_name}职位更新报告</h2>
-    <p>更新时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
-    <p>爬取页面范围: {START_PAGE}-{last_page}</p>
-    <p>新增职位: {len(added_jobs)} 个</p>
-    <p>总职位数: {len(existing_jobs)} 个</p>
-    """
-    
-    if added_jobs:
-        email_body += "<h3>新增职位列表:</h3><ul>"
-        for job in added_jobs:
-            email_body += f"<li>{job['company']} - {job['position']} (截止: {job['deadline']})</li>"
-        email_body += "</ul>"
-    
-    # 保存Excel文件并发送邮件
-    if save_excel_file(list(existing_jobs.values()), excel_file, added_jobs=added_jobs):
-        # 发送带附件的邮件
+    # 生成Excel和发送邮件（汇总所有新职位）
+    logger.info(f"{site_name} 全部爬取完成，共发现 {len(all_new_jobs)} 个新职位")
+    if save_excel_file(list(existing_jobs.values()), excel_file, added_jobs=all_new_jobs):
+        # 使用美化的HTML邮件
+        email_body = generate_email_html(all_new_jobs, site_name) if all_new_jobs else f"""
+        <div class="header"><h1>🎯 {site_name}职位更新</h1></div>
+        <div class="notification-card">
+            <p>更新时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+            <p>已爬取1-{END_PAGE}页，本次无新增职位</p>
+            <p>总职位数: {len(existing_jobs)} 个</p>
+        </div>
+        """
         send_email(
-            subject=f"{site_name}招聘信息更新 - {datetime.now().strftime('%Y%m%d')}",
+            subject=f"{site_name}招聘信息更新（1-{END_PAGE}页）- {datetime.now().strftime('%Y%m%d')}",
             body=email_body,
             attachment_paths=[excel_file]
         )
     else:
-        # 发送不带附件的邮件
-        email_body += "<p>警告: 未能生成Excel附件</p>"
         send_email(
-            subject=f"{site_name}招聘信息更新 - {datetime.now().strftime('%Y%m%d')}",
-            body=email_body
+            subject=f"{site_name}招聘信息更新（1-{END_PAGE}页）- {datetime.now().strftime('%Y%m%d')}",
+            body=f"<h3>{site_name}爬取完成</h3><p>新职位: {len(all_new_jobs)} 个</p><p>Excel生成失败</p>"
         )
     
-    logger.info(f"{site_name}站点处理完成")
-    
-    # 返回当前所有职位数据
     return list(existing_jobs.values())
 
 def main():
-    """主程序（支持双站点爬取）"""
-    logger.info(f"开始爬取招聘信息，时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    """主程序"""
+    logger.info(f"开始爬取招聘信息（1-{END_PAGE}页，每次2页），时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
     try:
         # 处理校招站点
@@ -782,14 +592,13 @@ def main():
         
         logger.info(f"校招职位总数: {len(campus_data)}")
         logger.info(f"实习职位总数: {len(intern_data)}")
-        logger.info("所有任务已完成")
+        logger.info("所有任务完成")
         
     except Exception as e:
-        logger.error(f"主程序发生错误: {e}")
-        # 发送错误通知
+        logger.error(f"主程序错误: {e}")
         send_email(
-            subject="招聘信息爬取出错",
-            body=f"<h2>爬取过程中发生错误</h2><p>{str(e)}</p><p>时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>"
+            subject="招聘爬取出错通知",
+            body=f"<h2>爬取失败</h2><p>错误: {str(e)}</p><p>时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>"
         )
 
 
