@@ -28,7 +28,8 @@ logger = logging.getLogger(__name__)
 START_PAGE = 1
 END_PAGE = 6
 MAX_PAGES_PER_SESSION = 2
-SITE_URL = "https://www.givemeoc.com"
+SITE_URL = "https://www.givemeoc.com"#校招岗位
+SITE_URL_INTERNSHIP = "https://www.givemeoc.com/internship"  # 实习岗位
 WAIT_TIME_MIN = 1
 WAIT_TIME_MAX = 3
 
@@ -36,8 +37,11 @@ WAIT_TIME_MAX = 3
 EMAIL_USER = os.environ.get('EMAIL_USER')#发送邮箱
 EMAIL_PWD = os.environ.get('EMAIL_PWD')#发送邮箱密码
 RECEIVER_EMAIL = "h1952365030@163.com"#接受邮箱
-DATA_FILE = "job_data.json"
-EXCEL_FILE = "job_data.xlsx"
+# 为两类岗位创建独立的存储文件
+DATA_FILE_CAMPUS = "campus_jobs.json"  # 校招数据文件
+DATA_FILE_INTERNSHIP = "intern_jobs.json"  # 实习数据文件
+EXCEL_FILE_CAMPUS = "campus_jobs.xlsx"  # 校招Excel
+EXCEL_FILE_INTERNSHIP = "intern_jobs.xlsx"  # 实习Excel
 
 def setup_browser():
     """配置浏览器（GitHub Actions专用）"""
@@ -67,11 +71,11 @@ def setup_browser():
     logger.info(f"浏览器初始化完成，使用路径: {chrome_options.binary_location}")
     return driver
 
-def crawl_job_data(driver, start_page, end_page):
-    """爬取指定页码范围的数据"""
+def crawl_job_data(driver, site_url, start_page, end_page, job_type):
+    """爬取指定站点和页码范围的数据"""
     try:
-        # 访问网站
-        driver.get(SITE_URL)
+        # 访问指定类型的网站
+        driver.get(site_url)
         time.sleep(random.uniform(WAIT_TIME_MIN, WAIT_TIME_MAX))
         
         # 如果起始页不是第一页，跳转到指定页
@@ -120,6 +124,7 @@ def crawl_job_data(driver, start_page, end_page):
                     notes = safe_get_text(item, "td.crt-col-notes")
 
                     crawled_data.append({
+                        "job_type": job_type,  # 添加职位类型字段
                         "company": company,
                         "company_type": company_type,
                         "location": location,
@@ -175,15 +180,15 @@ def safe_get_attr(element, selector, attribute):
     except:
         return ""
 
-def load_historical_data():
-    """从本地文件加载历史数据"""
+def load_historical_data(data_file):
+    """从指定文件加载历史数据"""
     try:
-        logger.info("加载历史数据...")
-        if os.path.exists(DATA_FILE):
-            with open(DATA_FILE, 'r', encoding='utf-8') as f:
+        logger.info(f"加载历史数据: {data_file}")
+        if os.path.exists(data_file):
+            with open(data_file, 'r', encoding='utf-8') as f:
                 return json.load(f)
         else:
-            logger.info("首次运行：尚未找到历史数据文件，将创建新数据集")
+            logger.info(f"首次运行：尚未找到历史数据文件 {data_file}")
             return {
                 "last_update": None,
                 "jobs": {}
@@ -195,13 +200,13 @@ def load_historical_data():
             "jobs": {}
         }
 
-def save_historical_data(data):
-    """保存数据到本地文件"""
+def save_historical_data(data, data_file):
+    """保存数据到指定文件"""
     try:
-        logger.info("保存数据到本地...")
-        with open(DATA_FILE, 'w', encoding='utf-8') as f:
+        logger.info(f"保存数据到本地: {data_file}")
+        with open(data_file, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
-        logger.info(f"成功保存数据到: {DATA_FILE}")
+        logger.info(f"成功保存数据到: {data_file}")
         return True
     except Exception as e:
         logger.error(f"保存数据失败: {str(e)}")
@@ -342,9 +347,9 @@ def compare_jobs(new_jobs, historical_data):
     logger.info(f"发现新增职位: {len(added_jobs)}, 更新职位: {len(updated_jobs)}, 总职位数: {total_jobs}")
     return added_jobs, updated_jobs, historical_data, total_jobs
 
-def generate_html_report(all_jobs, added_jobs, updated_jobs, total_jobs, expired_count):
-    """生成HTML格式的报告"""
-    logger.info("生成HTML报告...")
+def generate_html_report(campus_data, intern_data, campus_expired, intern_expired):
+    """生成HTML格式的报告（支持校招和实习双类别）"""
+    logger.info("生成双类别HTML报告...")
     
     # 转义函数 - 处理HTML特殊字符和花括号
     def safe_format(text):
@@ -356,14 +361,15 @@ def generate_html_report(all_jobs, added_jobs, updated_jobs, total_jobs, expired
         return escaped.replace("{", "{{").replace("}", "}}")
     
     # 构建职位条目的HTML
-    def build_job_html(jobs, css_class):
+    def build_job_html(jobs):
         html_content = ""
         for job in jobs:
             # 安全处理所有字段
             safe_job = {k: safe_format(v) for k, v in job.items()}
             
             html_content += f"""
-                <li class="job-item {css_class}">
+                <li class="job-item">
+                    <div class="job-type">{safe_job.get('job_type', '')}</div>
                     <div class="job-company">{safe_job['company']}</div>
                     <div class="job-position">{safe_job['position']}</div>
                     <div>类型: {safe_job['company_type']} | 地点: {safe_job['location']}</div>
@@ -378,7 +384,21 @@ def generate_html_report(all_jobs, added_jobs, updated_jobs, total_jobs, expired
             """
         return html_content
 
-    # HTML头部 - 使用安全格式化
+    # 统计校招数据
+    campus_stats = {
+        "total": len(campus_data["jobs"]),
+        "new": len([j for j in campus_data.get("added", [])]),
+        "updated": len([j for j in campus_data.get("updated", [])])
+    }
+    
+    # 统计实习数据
+    intern_stats = {
+        "total": len(intern_data["jobs"]),
+        "new": len([j for j in intern_data.get("added", [])]),
+        "updated": len([j for j in intern_data.get("updated", [])])
+    }
+
+    # HTML头部
     html_content = f"""
     <!DOCTYPE html>
     <html>
@@ -386,19 +406,7 @@ def generate_html_report(all_jobs, added_jobs, updated_jobs, total_jobs, expired
         <meta charset="UTF-8">
         <title>招聘信息更新报告</title>
         <style>
-            body {{ font-family: Arial, sans-serif; line-height: 1.6; }}
-            .container {{ max-width: 800px; margin: 0 auto; }}
-            .stats {{ background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin-bottom: 20px; }}
-            .section {{ margin-bottom: 30px; }}
-            .section-title {{ border-bottom: 2px solid #3498db; padding-bottom: 5px; }}
-            .job-list {{ list-style: none; padding-left: 0; }}
-            .job-item {{ border: 1px solid #ddd; border-radius: 5px; padding: 15px; margin-bottom: 15px; }}
-            .job-company {{ font-weight: bold; font-size: 18px; }}
-            .job-position {{ font-weight: bold; color: #2c3e50; margin: 5px 0; }}
-            .job-links a {{ margin-right: 10px; color: #3498db; text-decoration: none; }}
-            .new {{ background-color: rgba(46, 204, 113, 0.1); }}
-            .updated {{ background-color: rgba(243, 156, 18, 0.1); }}
-            .footer {{ margin-top: 30px; text-align: center; color: #7f8c8d; }}
+            /* 样式保持不变... */
         </style>
     </head>
     <body>
@@ -406,32 +414,32 @@ def generate_html_report(all_jobs, added_jobs, updated_jobs, total_jobs, expired
             <h1>招聘信息更新报告</h1>
             <div class="stats">
                 <p><strong>统计摘要</strong></p>
-                <p>总职位数: {total_jobs}</p>
-                <p>新增职位: {len(added_jobs)} <span style="color:#2ecc71">(绿色标记)</span></p>
-                <p>更新职位: {len(updated_jobs)} <span style="color:#f39c12">(橙色标记)</span></p>
-                <p>清理过期职位: {expired_count}</p>
+                <p>校招总岗位: {campus_stats['total']} | 实习总岗位: {intern_stats['total']}</p>
+                <p>校招新增岗位: {campus_stats['new']} | 实习新增岗位: {intern_stats['new']}</p>
+                <p>校招更新岗位: {campus_stats['updated']} | 实习更新岗位: {intern_stats['updated']}</p>
+                <p>清理过期校招职位: {campus_expired} | 清理过期实习职位: {intern_expired}</p>
                 <p>报告时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
             </div>
     """
     
-    # 新增职位部分
-    if added_jobs:
+    # 校招职位部分
+    if campus_stats['new'] > 0:
         html_content += f"""
             <div class="section">
-                <h2 class="section-title">新增职位 ({len(added_jobs)})</h2>
+                <h2 class="section-title">校招新增职位 ({campus_stats['new']})</h2>
                 <ul class="job-list">
-                    {build_job_html(added_jobs, "new")}
+                    {build_job_html(campus_data.get("added", []))}
                 </ul>
             </div>
         """
     
-    # 更新职位部分
-    if updated_jobs:
+    # 实习职位部分
+    if intern_stats['new'] > 0:
         html_content += f"""
             <div class="section">
-                <h2 class="section-title">更新职位 ({len(updated_jobs)})</h2>
+                <h2 class="section-title">实习新增职位 ({intern_stats['new']})</h2>
                 <ul class="job-list">
-                    {build_job_html(updated_jobs, "updated")}
+                    {build_job_html(intern_data.get("added", []))}
                 </ul>
             </div>
         """
@@ -440,7 +448,7 @@ def generate_html_report(all_jobs, added_jobs, updated_jobs, total_jobs, expired
     html_content += """
             <div class="footer">
                 <p>此报告由招聘信息爬虫自动生成</p>
-                <p>附件包含完整的招聘信息Excel文件</p>
+                <p>附件包含校招和实习的完整招聘信息Excel文件</p>
             </div>
         </div>
     </body>
@@ -449,8 +457,9 @@ def generate_html_report(all_jobs, added_jobs, updated_jobs, total_jobs, expired
     
     return html_content
 
-def send_email(subject, body, attachment_path=None):
-    """发送邮件通知（支持多收件人）"""
+    
+ef send_email(subject, body, attachment_paths=None):
+    """发送邮件通知（支持多附件）"""
     try:
         # 邮件服务器配置（这里使用QQ邮箱示例）
         smtp_server = "smtp.qq.com"
@@ -466,13 +475,15 @@ def send_email(subject, body, attachment_path=None):
         # 支持HTML正文
         msg.attach(MIMEText(body, 'html'))
 
-        # 添加附件
-        if attachment_path and os.path.exists(attachment_path):
-            with open(attachment_path, 'rb') as f:
-                part = MIMEApplication(f.read(), Name=os.path.basename(attachment_path))
-            part['Content-Disposition'] = f'attachment; filename="{os.path.basename(attachment_path)}"'
-            msg.attach(part)
-            logger.info(f"已添加附件: {attachment_path}")
+        # 添加多个附件
+        if attachment_paths:
+            for path in attachment_paths:
+                if os.path.exists(path):
+                    with open(path, 'rb') as f:
+                        part = MIMEApplication(f.read(), Name=os.path.basename(path))
+                    part['Content-Disposition'] = f'attachment; filename="{os.path.basename(path)}"'
+                    msg.attach(part)
+                    logger.info(f"已添加附件: {path}")
 
         # 发送邮件（同时发给主收件人和抄送地址）
         with smtplib.SMTP(smtp_server, smtp_port) as server:
@@ -490,73 +501,122 @@ def send_email(subject, body, attachment_path=None):
         logger.error(f"邮件发送失败: {str(e)}")
         return False
 
+
+
 def main():
-    """主程序"""
+    """主程序（支持双站点爬取）"""
     logger.info(f"开始爬取招聘信息，时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
     try:
-        # 1. 加载历史数据
-        historical_data = load_historical_data()
+        # 处理校招站点
+        campus_data = process_site(
+            "校招",
+            SITE_URL_CAMPUS,
+            DATA_FILE_CAMPUS,
+            EXCEL_FILE_CAMPUS
+        )
         
-        # 2. 爬取新数据
-        all_jobs = []
-        current_start_page = START_PAGE
-        driver = setup_browser()
+        # 处理实习站点
+        intern_data = process_site(
+            "实习",
+            SITE_URL_INTERNSHIP,
+            DATA_FILE_INTERNSHIP,
+            EXCEL_FILE_INTERNSHIP
+        )
         
-        # 循环爬取直到达到目标页数
-        while current_start_page <= END_PAGE:
-            logger.info(f"开始新的浏览器会话，从第 {current_start_page} 页开始爬取...")
-            data, last_page = crawl_job_data(driver, current_start_page, END_PAGE)
-            all_jobs.extend(data)
-            logger.info(f"本次会话爬取了 {len(data)} 条数据")
-            current_start_page = last_page + 1
-            
-            if current_start_page <= END_PAGE:
-                logger.info("等待5秒后开始新的会话...")
-                time.sleep(5)
+        # 生成HTML报告
+        html_report = generate_html_report(
+            campus_data, 
+            intern_data,
+            campus_data.get("expired", 0),
+            intern_data.get("expired", 0)
+        )
         
-        driver.quit()
-        
-        if not all_jobs:
-            logger.error("没有爬取到任何数据")
-            send_email("招聘信息爬取失败", "<h1>招聘信息爬取失败</h1><p>本次爬取未获取到任何数据</p>")
-            return
-        
-        logger.info(f"共爬取 {len(all_jobs)} 条职位信息")
-        
-        # 3. 清理过期职位
-        historical_data, expired_count = clean_expired_jobs(historical_data)
-        
-        # 4. 对比新旧数据
-        added_jobs, updated_jobs, historical_data, total_jobs = compare_jobs(all_jobs, historical_data)
-        
-        logger.info(f"新增职位: {len(added_jobs)}, 更新职位: {len(updated_jobs)}, 总职位数: {total_jobs}")
-        
-        # 5. 保存更新后的数据
-        save_success = save_historical_data(historical_data)
-        
-        # 6. 生成Excel文件
-        # 将所有职位数据汇总
-        all_job_list = list(historical_data['jobs'].values())
-        save_excel_file(all_job_list, EXCEL_FILE, added_jobs=added_jobs)
-        
-        # 7. 生成HTML报告
-        html_report = generate_html_report(all_jobs, added_jobs, updated_jobs, total_jobs, expired_count)
-        
-        # 8. 发送邮件（附带Excel文件）
-        subject = f"招聘信息更新报告 {datetime.now().strftime('%Y-%m-%d')}"
-        if not send_email(subject, html_report, attachment_path=EXCEL_FILE):
-            logger.error("邮件发送失败，但数据处理已完成")
+        # 发送邮件（带双附件）
+        subject = f"双站点招聘信息更新 {datetime.now().strftime('%Y-%m-%d')}"
+        send_email(
+            subject, 
+            html_report, 
+            attachment_paths=[EXCEL_FILE_CAMPUS, EXCEL_FILE_INTERNSHIP]
+        )
         
         logger.info("处理完成!")
     except Exception as e:
         logger.error(f"主程序发生未处理异常: {str(e)}")
+        
         # 尝试发送错误通知邮件
         try:
             error_html = f"<h1>招聘爬虫系统崩溃</h1><p>系统发生未处理异常:</p><pre>{str(e)}</pre>"
             send_email("招聘爬虫系统崩溃", error_html)
         except Exception as email_err:
             logger.error(f"发送错误通知邮件失败: {str(email_err)}")
+
+
+def process_site(site_name, site_url, data_file, excel_file):
+    """处理单个站点（校招/实习）的完整流程"""
+    logger.info(f"开始处理[{site_name}]站点: {site_url}")
+    
+    # 1. 加载历史数据
+    historical_data = load_historical_data(data_file)
+    
+    # 2. 爬取新数据
+    all_jobs = []
+    current_start_page = START_PAGE
+    driver = setup_browser()
+    
+    # 循环爬取直到达到目标页数
+    while current_start_page <= END_PAGE:
+        logger.info(f"[{site_name}]开始新的浏览器会话，从第 {current_start_page} 页开始爬取...")
+        data, last_page = crawl_job_data(
+            driver, 
+            site_url, 
+            current_start_page, 
+            END_PAGE,
+            site_name  # 传递职位类型
+        )
+        all_jobs.extend(data)
+        logger.info(f"[{site_name}]本次会话爬取了 {len(data)} 条数据")
+        current_start_page = last_page + 1
+        
+        if current_start_page <= END_PAGE:
+            logger.info(f"[{site_name}]等待5秒后开始新的会话...")
+            time.sleep(5)
+    
+    driver.quit()
+    
+    if not all_jobs:
+        logger.error(f"[{site_name}]没有爬取到任何数据")
+        return {
+            "jobs": {},
+            "added": [],
+            "updated": [],
+            "expired": 0
+        }
+    
+    logger.info(f"[{site_name}]共爬取 {len(all_jobs)} 条职位信息")
+    
+    # 3. 清理过期职位
+    historical_data, expired_count = clean_expired_jobs(historical_data)
+    logger.info(f"[{site_name}]清理了 {expired_count} 个过期职位")
+    
+    # 4. 对比新旧数据
+    added_jobs, updated_jobs, historical_data, total_jobs = compare_jobs(all_jobs, historical_data)
+    
+    # 5. 保存更新后的数据
+    save_historical_data(historical_data, data_file)
+    
+    # 6. 生成Excel文件
+    all_job_list = list(historical_data['jobs'].values())
+    save_excel_file(all_job_list, excel_file, added_jobs=added_jobs)
+    
+    return {
+        "jobs": historical_data['jobs'],
+        "added": added_jobs,
+        "updated": updated_jobs,
+        "expired": expired_count
+    }
+
+# ... 其他辅助函数保持不变 ...
 
 if __name__ == "__main__":
     main()
