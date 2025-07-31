@@ -13,6 +13,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from fake_useragent import UserAgent
 import openpyxl
+import html
 
 # 配置日志
 logging.basicConfig(
@@ -404,24 +405,259 @@ def clean_expired_jobs(historical_data):
                     expired_count += 1
                     logger.info(f"已删除到期职位: {job['company']} - {job['position']} (截止时间: {job['deadline']})")
             except Exception as e:
-                logger.warning(f"解析deadline失败: {job['deadline']}，错误: {e}")
+                logger.warning("招满即止")
                 continue
     logger.info(f"清理完成，共删除 {expired_count} 个过期职位")
     return historical_data
+
+
+# 添加生成精美HTML邮件的函数
+def generate_email_html(new_jobs, job_type):
+    """生成美观的HTML邮件内容"""
+    # CSS样式
+    styles = """
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            line-height: 1.6; 
+            color: #333; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            background-color: #f5f7fa; 
+        }
+        .header { 
+            background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+            color: white; 
+            padding: 20px; 
+            border-radius: 8px 8px 0 0;
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .header h1 { 
+            margin: 0; 
+            font-weight: 600;
+            font-size: 24px;
+        }
+        .notification-card {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 1px solid #eaeaea;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .stat-item {
+            background: #f0f5ff;
+            padding: 15px;
+            border-radius: 8px;
+            flex: 1;
+            margin: 0 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .stat-item span {
+            display: block;
+            font-size: 28px;
+            font-weight: bold;
+            color: #4b6cb7;
+            margin-bottom: 5px;
+        }
+        .job-list {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .job-item {
+            background-color: #fff;
+            border-left: 4px solid #4b6cb7;
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 0 6px 6px 0;
+            transition: all 0.3s ease;
+        }
+        .job-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(75, 108, 183, 0.15);
+        }
+        .company {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        .position {
+            font-weight: 600;
+            color: #4b6cb7;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 10px 0;
+            color: #555;
+            font-size: 14px;
+        }
+        .meta span {
+            display: flex;
+            align-items: center;
+        }
+        .meta span:before {
+            content: "•";
+            margin-right: 5px;
+            color: #4b6cb7;
+        }
+        .deadline {
+            background-color: #fff9e6;
+            color: #e67e22;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        .links a {
+            display: inline-block;
+            background: #4b6cb7;
+            color: white !important;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+        .links a:hover {
+            background: #3a559f;
+            text-decoration: none;
+        }
+        .notes {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-left: 3px solid #4b6cb7;
+            font-size: 14px;
+            color: #555;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #777;
+            font-size: 13px;
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+        .highlight {
+            background: linear-gradient(120deg, #e0f7fa 0%, #bbdefb 100%);
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+    </style>
+    """
+    
+    # 构建HTML内容
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>新职位通知 - {job_type}</title>
+        {styles}
+    </head>
+    <body>
+        <div class="header">
+            <h1>🎯 新职位通知 - {job_type}</h1>
+        </div>
+        
+        <div class="notification-card">
+            <div class="stats">
+                <div class="stat-item">
+                    <span>{len(new_jobs)}</span>
+                    新职位
+                </div>
+                <div class="stat-item">
+                    <span>{len(set(job['company'] for job in new_jobs))}</span>
+                    家公司
+                </div>
+                <div class="stat-item">
+                    <span>{datetime.now().strftime('%m/%d')}</span>
+                    更新日期
+                </div>
+            </div>
+            
+            <div class="job-list">
+    """
+    
+    # 添加每个职位的信息
+    for job in new_jobs:
+        deadline = job.get('deadline', '截止时间待定')
+        links_html = ""
+        if job.get('links'):
+            links_html = f'<div class="links"><a href="{job["links"]}" target="_blank">查看职位详情</a></div>'
+        
+        # 处理职位亮点
+        notes = job.get('notes', '')
+        if notes:
+            notes = f'<div class="notes">💡 职位亮点: {html.escape(notes)}</div>'
+        
+        html_content += f"""
+        <div class="job-item">
+            <div class="company">{html.escape(job.get('company', ''))}</div>
+            <div class="position">🏢 {html.escape(job.get('position', ''))}</div>
+            <div class="meta">
+                <span>📍 {html.escape(job.get('location', ''))}</span>
+                <span>🚀 {html.escape(job.get('recruitment_type', ''))}</span>
+                <span>🎯 {html.escape(job.get('target', ''))}</span>
+            </div>
+            <div class="deadline">⏰ 截止时间: {html.escape(str(deadline))}</div>
+            {notes}
+            {links_html}
+        </div>
+        """
+    
+    # 页脚
+    html_content += f"""
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>此邮件由自动爬虫系统生成 | 抓取时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+            <p>© {datetime.now().year} 职位监控系统 | 共发现 {len(new_jobs)} 个新职位</p>
+        </div>
+    </body>
+    </html>
+    """
+    
+    return html_content
         
 def send_email(subject, body, attachment_paths=None):
-    """发送邮件通知（支持多附件和多接收邮箱）"""
+    """
+    发送邮件通知（支持多附件和多接收邮箱）
+    :param subject: 邮件主题
+    :param body: 邮件正文内容
+    :param attachment_paths: 附件路径列表(可选)
+    :return: 发送是否成功
+    """
     try:
         smtp_server = "smtp.qq.com"
         smtp_port = 587
 
         msg = MIMEMultipart()
         msg['From'] = EMAIL_USER
-        msg['To'] = ", ".join(RECEIVER_EMAILS)  # 多个邮箱逗号分隔
+        msg['To'] = ", ".join(RECEIVER_EMAILS)
         msg['Subject'] = subject
         
+        # 添加HTML格式的邮件正文
         msg.attach(MIMEText(body, 'html'))
 
+        # 添加附件
         if attachment_paths:
             for path in attachment_paths:
                 if os.path.exists(path):
@@ -430,11 +666,11 @@ def send_email(subject, body, attachment_paths=None):
                     part['Content-Disposition'] = f'attachment; filename="{os.path.basename(path)}"'
                     msg.attach(part)
 
-        # 发送给所有接收邮箱
+        # 发送邮件
         with smtplib.SMTP(smtp_server, smtp_port) as server:
             server.starttls()
             server.login(EMAIL_USER, EMAIL_PWD)
-            server.sendmail(EMAIL_USER, RECEIVER_EMAILS, msg.as_string())  # 发送给列表所有邮箱
+            server.sendmail(EMAIL_USER, RECEIVER_EMAILS, msg.as_string())
         
         logger.info(f"邮件已发送至: {', '.join(RECEIVER_EMAILS)}")
         return True
@@ -555,6 +791,7 @@ def main():
             subject="招聘信息爬取出错",
             body=f"<h2>爬取过程中发生错误</h2><p>{str(e)}</p><p>时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>"
         )
+
 
 if __name__ == "__main__":
     main()
