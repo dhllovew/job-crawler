@@ -15,6 +15,7 @@ from email.mime.application import MIMEApplication
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from fake_useragent import UserAgent
+import openpyxl
 
 # 配置日志
 logging.basicConfig(
@@ -511,7 +512,7 @@ def main():
         # 处理校招站点
         campus_data = process_site(
             "校招",
-            SITE_URL_CAMPUS,
+            SITE_URL,
             DATA_FILE_CAMPUS,
             EXCEL_FILE_CAMPUS
         )
