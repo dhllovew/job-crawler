@@ -36,7 +36,7 @@ WAIT_TIME_MAX = 3
 # 从环境变量获取配置
 EMAIL_USER = os.environ.get('EMAIL_USER')#发送邮箱
 EMAIL_PWD = os.environ.get('EMAIL_PWD')#发送邮箱密码
-RECEIVER_EMAIL = "h1952365030@163.com"#接受邮箱
+RECEIVER_EMAIL = "2946273956@qq.com"#接受邮箱
 # 为两类岗位创建独立的存储文件
 DATA_FILE_CAMPUS = "campus_jobs.json"  # 校招数据文件
 DATA_FILE_INTERNSHIP = "intern_jobs.json"  # 实习数据文件
