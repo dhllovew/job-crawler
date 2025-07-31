@@ -35,11 +35,11 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y chromium-browser chromium-chromedriver
     
-    # 4. 运行爬虫
+    # 4. 运行爬虫（脚本名称可能需要调整）
     - name: Run crawler
-      run: python crawler_github.py
+      run: python crawler_github.py  # 确保脚本名称正确
     
-    # 5. 自动提交JSON文件到仓库（永久保存）
+    # 5. 自动提交JSON文件到仓库（永久保存）- 修改为提交两个JSON文件
     - name: Commit and push JSON data
       if: success()  # 只有爬虫成功才提交
       run: |
@@ -48,19 +48,22 @@ jobs:
         git config --global user.email "actions@github.com"
         
         # 检查是否有变更（避免空提交）
-        git add job_data.json
+        git add campus_jobs.json intern_jobs.json  # 添加两个文件
         git status
+        
         if git diff-index --quiet HEAD; then
           echo "没有数据变更，跳过提交"
         else
-          git commit -m "Auto-update job data [skip ci]"
+          git commit -m "Auto-update job data (campus and intern) [skip ci]"
           git push
         fi
     
-    # 6. 上传Excel作为临时制品（可选）
-    - name: Upload Excel artifact
+    # 6. 上传Excel作为临时制品（修改为上传两个Excel文件）
+    - name: Upload Excel artifacts
       uses: actions/upload-artifact@v4
       with:
         name: job_data_excel
-        path: job_data.xlsx
-        retention-days: 1  # 只保留1天（因为JSON已永久保存）
+        path: |
+          campus_jobs.xlsx
+          intern_jobs.xlsx
+        retention-days: 1  # 只保留1天
