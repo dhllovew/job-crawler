@@ -458,7 +458,7 @@ def generate_html_report(campus_data, intern_data, campus_expired, intern_expire
     return html_content
 
     
-ef send_email(subject, body, attachment_paths=None):
+def send_email(subject, body, attachment_paths=None):
     """发送邮件通知（支持多附件）"""
     try:
         # 邮件服务器配置（这里使用QQ邮箱示例）
