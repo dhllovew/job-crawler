@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 # 配置常量（核心修改：总页数6，每次爬2页）
 START_PAGE = 1
-END_PAGE = 6  # 目标总页数
+END_PAGE = 10  # 目标总页数
 MAX_PAGES_PER_SESSION = 2  # 每次会话最多爬2页
 SITE_URL = "https://www.givemeoc.com"  # 校招岗位
 SITE_URL_INTERNSHIP = "https://www.givemeoc.com/internship"  # 实习岗位
