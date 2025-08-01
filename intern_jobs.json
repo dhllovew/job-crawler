@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-07-31T15:51:14.670270",
+  "last_update": "2025-08-01T15:52:07.304168",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -4752,7 +4752,39 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-07-31T13:36:19.977176"
+    },
+    "伊士曼-IT Intern (Al/Automation方向)": {
+      "job_type": "实习",
+      "company": "伊士曼",
+      "company_type": "外企",
+      "location": "上海市",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "IT Intern (Al/Automation方向)",
+      "update_time": "2025-08-01",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/igXNYHtycqWSW8akOqRs7w",
+      "notice": "https://mp.weixin.qq.com/s/igXNYHtycqWSW8akOqRs7w",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-01T15:50:49.812130"
+    },
+    "上海悦禄资产-AI量化实验室研究员(实习)\nAI研发工程师(实习)": {
+      "job_type": "实习",
+      "company": "上海悦禄资产",
+      "company_type": "民企",
+      "location": "上海市",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "AI量化实验室研究员(实习)\nAI研发工程师(实习)",
+      "update_time": "2025-08-01",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/MrEM5SON-wWpxbM03PiG7A",
+      "notice": "https://mp.weixin.qq.com/s/MrEM5SON-wWpxbM03PiG7A",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-01T15:50:49.958259"
     }
   },
-  "last_clean_time": "2025-07-31T15:49:39.497772"
+  "last_clean_time": "2025-08-01T15:49:05.212946"
 }
