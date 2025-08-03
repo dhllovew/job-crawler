@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-08-02T15:47:25.615465",
+  "last_update": "2025-08-03T15:49:49.770613",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -4896,7 +4896,71 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-08-02T15:46:01.646229"
+    },
+    "鸿擎科技-校园大使": {
+      "job_type": "实习",
+      "company": "鸿擎科技",
+      "company_type": "民企",
+      "location": "全国",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "校园大使",
+      "update_time": "2025-08-03",
+      "deadline": "招满为止",
+      "links": "https://qcnhg4ksaiwt.jobs.feishu.cn/257870",
+      "notice": "https://mp.weixin.qq.com/s/OLUvFnznJJqJ6FWN78qH7w",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-03T15:48:30.033483"
+    },
+    "SAP 7月实习生热招-SAP China iXpIntern -Generative AlDeveloper": {
+      "job_type": "实习",
+      "company": "SAP 7月实习生热招",
+      "company_type": "外企",
+      "location": "上海市,西安市",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "SAP China iXpIntern -Generative AlDeveloper",
+      "update_time": "2025-08-03",
+      "deadline": "招满为止",
+      "links": "https://smirs-prod.smirs.cn40.apps.platform.sapcloud.cn/wechat/newui/sapprod?_ori=1&_r=0.38054549982196884",
+      "notice": "https://mp.weixin.qq.com/s/PK1IpJOelLFsoQ_PoSkLGA",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-03T15:48:30.175286"
+    },
+    "海天味业-校园大使": {
+      "job_type": "实习",
+      "company": "海天味业",
+      "company_type": "央国企",
+      "location": "全国",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "校园大使",
+      "update_time": "2025-08-03",
+      "deadline": "招满为止",
+      "links": "https://wecruit.hotjob.cn/SU6322dfb70dcad46a862da4c5/pb/overseas.html",
+      "notice": "https://mp.weixin.qq.com/s/_5h9hAMGOcSd2-ksQ96icQ",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-03T15:48:30.314957"
+    },
+    "湖南卫视《丝路星声》实习生招募-嘉宾选角组,翻译组,编剧组,美术组,宣传组,音乐组": {
+      "job_type": "实习",
+      "company": "湖南卫视《丝路星声》实习生招募",
+      "company_type": "央国企",
+      "location": "长沙市",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "嘉宾选角组,翻译组,编剧组,美术组,宣传组,音乐组",
+      "update_time": "2025-08-03",
+      "deadline": "招满为止",
+      "links": "https://app.mokahr.com/campus-recruitment/hntv/150532?locale=zh-CN",
+      "notice": "https://mp.weixin.qq.com/s/Yn0TzmQZrMvPvHjOOOpwRQ",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-03T15:48:30.453619"
     }
   },
-  "last_clean_time": "2025-08-02T15:45:44.757873"
+  "last_clean_time": "2025-08-03T15:48:20.868020"
 }
