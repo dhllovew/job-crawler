@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-08-03T15:49:49.770613",
+  "last_update": "2025-08-04T15:52:57.117622",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -4960,7 +4960,71 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-08-03T15:48:30.453619"
+    },
+    "泰康资产-债券研究部、第三方投资部、夹层投资部、创新业务部、专户产品部、数字化规划部、人力资源部": {
+      "job_type": "实习",
+      "company": "泰康资产",
+      "company_type": "民企",
+      "location": "北京",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "债券研究部、第三方投资部、夹层投资部、创新业务部、专户产品部、数字化规划部、人力资源部",
+      "update_time": "2025-08-04",
+      "deadline": "招满为止",
+      "links": "https://jobtaikang.zhiye.com/custom/zcshixi?hideAll=true&sessionid=",
+      "notice": "https://mp.weixin.qq.com/s/G12YzIQuawLeHmaVsAlyYA",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-04T15:51:21.834036"
+    },
+    "天津人民艺术剧院-宣传营销策划部、剧场物业部": {
+      "job_type": "实习",
+      "company": "天津人民艺术剧院",
+      "company_type": "央国企",
+      "location": "天津",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "宣传营销策划部、剧场物业部",
+      "update_time": "2025-08-04",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/NKGGosJPieYOUSpnWNuDhQ",
+      "notice": "https://mp.weixin.qq.com/s/NKGGosJPieYOUSpnWNuDhQ",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-04T15:51:21.974065"
+    },
+    "东弘国际海事-实习生": {
+      "job_type": "实习",
+      "company": "东弘国际海事",
+      "company_type": "民企",
+      "location": "山东",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "实习生",
+      "update_time": "2025-08-04",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/dD3n5kTrcmE45vI3xChh-A",
+      "notice": "https://mp.weixin.qq.com/s/dD3n5kTrcmE45vI3xChh-A",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-04T15:51:22.112676"
+    },
+    "绿城中国-工程管理,财务管理": {
+      "job_type": "实习",
+      "company": "绿城中国",
+      "company_type": "民企",
+      "location": "杭州市",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "工程管理,财务管理",
+      "update_time": "2025-08-04",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/LwDvCyvOvcuc0amGD5206A",
+      "notice": "https://mp.weixin.qq.com/s/LwDvCyvOvcuc0amGD5206A",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-04T15:51:22.255361"
     }
   },
-  "last_clean_time": "2025-08-03T15:48:20.868020"
+  "last_clean_time": "2025-08-04T15:51:06.451136"
 }

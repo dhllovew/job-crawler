@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-08-03T15:48:15.936291",
+  "last_update": "2025-08-04T15:51:01.204981",
   "jobs": {
     "国科微电子-芯片类、模拟类、算法类、硬件类、软件类测试类、工艺类、销售类、职能类;": {
       "job_type": "校招",
@@ -4016,7 +4016,103 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-08-03T15:47:00.826099"
+    },
+    "中国人保-科技类、综合类": {
+      "job_type": "校招",
+      "company": "中国人保",
+      "company_type": "央国企",
+      "location": "全国",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "科技类、综合类",
+      "update_time": "2025-08-04",
+      "deadline": "招满为止",
+      "links": "https://picc.zhiye.com/custom/index",
+      "notice": "https://mp.weixin.qq.com/s/x9gVq_lV52mPg7RIjug91Q",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-04T15:49:37.516573"
+    },
+    "Lumissil-会计实习生、测试工程师、应用工程师、版图设计工程师、模拟电路设计工程师": {
+      "job_type": "校招",
+      "company": "Lumissil",
+      "company_type": "民企",
+      "location": "厦门、合肥",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "会计实习生、测试工程师、应用工程师、版图设计工程师、模拟电路设计工程师",
+      "update_time": "2025-08-04",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/GrEXra3v11PwGW_EQnVvlQ",
+      "notice": "https://mp.weixin.qq.com/s/GrEXra3v11PwGW_EQnVvlQ",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-04T15:49:37.658712"
+    },
+    "IEF爱依服-数据分析类、采设类、电商类、综合类": {
+      "job_type": "校招",
+      "company": "IEF爱依服",
+      "company_type": "民企",
+      "location": "广东",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "数据分析类、采设类、电商类、综合类",
+      "update_time": "2025-08-04",
+      "deadline": "招满为止",
+      "links": "https://wecruit.hotjob.cn/SU63d8e7312f9d2414bbead0cd/mc/position/campus?sharePostKey=65403531c4f84285b63e7a0ef2d2ddbb",
+      "notice": "https://mp.weixin.qq.com/s/quaYcLgLQ9PF_7clJ2GqDA",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-04T15:49:37.800247"
+    },
+    "中捷四方-肥料推广技术工程师,农林技术工程师": {
+      "job_type": "校招",
+      "company": "中捷四方",
+      "company_type": "民企",
+      "location": "咸阳市",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "肥料推广技术工程师,农林技术工程师",
+      "update_time": "2025-08-04",
+      "deadline": "招满为止",
+      "links": "https://www.zhongjiesifang.com/",
+      "notice": "https://mp.weixin.qq.com/s/6g4Uv4mu2IeJo5VRAseMaA",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-04T15:49:38.094982"
+    },
+    "厦门金鹭-星火夏令营-材料大类、机械大类、营销类、其他类;": {
+      "job_type": "校招",
+      "company": "厦门金鹭-星火夏令营",
+      "company_type": "民企",
+      "location": "厦门",
+      "recruitment_type": "秋招提前批",
+      "target": "2026年毕业生",
+      "position": "材料大类、机械大类、营销类、其他类;",
+      "update_time": "2025-08-04",
+      "deadline": "招满为止",
+      "links": "https://gesac.zhiye.com/campus/jobs",
+      "notice": "https://mp.weixin.qq.com/s/gvyhNEnbq3w3YQU9Wqxo3Q",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-04T15:49:38.235308"
+    },
+    "盛趣游戏-制作人培训生、策划培训生、程序培训生、运营培训生、综合培训生、美术类、其他;": {
+      "job_type": "校招",
+      "company": "盛趣游戏",
+      "company_type": "民企",
+      "location": "上海",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "制作人培训生、策划培训生、程序培训生、运营培训生、综合培训生、美术类、其他;",
+      "update_time": "2025-08-04",
+      "deadline": "招满为止",
+      "links": "https://app.mokahr.com/campus-recruitment/shengqu/96336#/",
+      "notice": "https://mp.weixin.qq.com/s/dE2Le_0esEWhAU_9zJy2ew",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-04T15:49:38.376272"
     }
   },
-  "last_clean_time": "2025-08-03T15:46:41.944240"
+  "last_clean_time": "2025-08-04T15:49:26.198872"
 }
