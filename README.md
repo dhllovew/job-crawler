@@ -1,159 +1,133 @@
-# 招聘信息自动化爬取系统
+# 校招与实习信息爬虫工具
 
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
-![Selenium](https://img.shields.io/badge/Selenium-WebDriver-green)
-![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-自动化部署-orange)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-这是一个专门为毕业生设计的自动化招聘信息爬取系统，帮助用户应对秋招、春招以及实习等求职场景。系统定时爬取付费招聘网站的最新信息，自动过滤过期职位，并通过邮件发送更新报告和完整数据文件。
+一个自动化爬取、筛选和推送2026届相关校招/实习信息的工具，支持数据本地存储与邮件通知功能。
 
-**📌 核心功能**
 
-**🕷️ 智能爬取引擎**
-- 使用Selenium模拟真实浏览器行为
-- 随机User-Agent和会话管理避免反爬
-- 分页爬取策略（每次会话最多2页）
-- 随机等待时间模拟人类操作模式
-- 无头模式支持（适合服务器部署）
+## 项目简介
 
- **📊 数据处理系统**
-- JSON格式存储历史数据
-- Excel格式导出完整职位信息
-- 自动对比新旧数据识别更新
-- 基于截止日期清理过期职位
-- 结构化存储招聘关键信息
+本工具通过Selenium自动化爬取指定招聘网站的校招和实习岗位信息，定向筛选2026届相关职位，将数据保存为JSON和Excel格式（新增职位自动高亮），并通过邮件推送最新职位动态，帮助2026届毕业生及时获取目标岗位信息。
 
-**📧 自动邮件通知**
-- HTML格式的视觉化报告
-- 新增/更新职位醒目标记
-- 统计摘要（总数/新增/更新/过期）
-- 附带Excel数据文件附件
-- 支持QQ邮箱（可配置其他SMTP服务）
 
-**🛠️ 技术栈**
+## 功能特点
 
-```mermaid
-graph TD
-A[Python 3.8+] --> B[核心库]
-B --> C1[Selenium WebDriver]
-B --> C2[Pandas]
-B --> C3[smtplib/email]
-B --> C4[fake_useragent]
-A --> D[部署环境]
-D --> E1[GitHub Actions]
-D --> E2[Linux服务器]
-D --> E3[Windows/macOS本地]
-```
+- **定向爬取**：支持校招和实习两个渠道的职位信息爬取，可配置爬取页码范围
+- **智能筛选**：自动过滤非2026届相关职位，仅保留目标群体岗位
+- **数据管理**：
+  - 本地JSON存储历史数据，自动去重
+  - 生成Excel报表，新增职位高亮标记
+  - 定期清理过期职位和无效数据
+- **通知机制**：通过邮件推送新增职位信息，支持多接收人
+- **反反爬策略**：
+  - 随机User-Agent与页面等待时间
+  - 每次会话爬取页数限制
+  - 浏览器自动化特征隐藏
+  - 模拟人类滚动与点击行为
 
-**⚙️ 配置指南**
 
- 环境变量设置
-1. 创建`.env`文件或在系统环境变量中添加：
-```env
-EMAIL_USER=your_email@example.com# 发件邮箱
-EMAIL_PWD=your_email_password# 邮箱授权码（不是登录密码）
-```
+## 环境依赖
 
- **关键参数配置**
-在代码中可调整的参数：
-```python
-START_PAGE = 1# 起始页码
-END_PAGE = 6# 结束页码
-MAX_PAGES_PER_SESSION = 2# 单次会话最大爬取页数
-SITE_URL = "https://www.givemeoc.com" # 目标网站
-WAIT_TIME_MIN = 1# 最小等待时间(秒)
-WAIT_TIME_MAX = 3# 最大等待时间(秒)
-DATA_FILE = "job_data.json"# 数据存储文件
-EXCEL_FILE = "job_data.xlsx"# Excel导出文件
-```
+- Python 3.8+
+- 依赖库：
+  ```bash
+  pip install selenium pandas fake-useragent openpyxl
+  ```
+- 浏览器驱动：
+  - Chrome/Chromium 浏览器
+  - 对应版本的 [ChromeDriver](https://sites.google.com/chromium.org/driver/)（需配置到环境变量或同目录）
 
-**💻 本地运行**
 
-1. 安装依赖：
+## 安装与配置
+
+1. **克隆仓库**：
+   ```bash
+   git clone https://github.com/yourusername/recruitment-spider.git
+   cd recruitment-spider
+   ```
+
+2. **安装依赖**：
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **环境变量配置**（必填，用于邮件功能）：
+   - `EMAIL_USER`：发送邮箱账号（如QQ邮箱）
+   - `EMAIL_PWD`：发送邮箱授权码（非登录密码，需在邮箱设置中开启SMTP并获取）
+   - `RECEIVER_EMAILS`：接收邮箱列表（分号分隔，如 `a@xxx.com;b@xxx.com`）
+
+   ```bash
+   # 临时配置示例（Linux/Mac）
+   export EMAIL_USER="your-email@qq.com"
+   export EMAIL_PWD="your-smtp-auth-code"
+   export RECEIVER_EMAILS="target1@xxx.com;target2@xxx.com"
+   
+   # Windows 命令提示符
+   set EMAIL_USER=your-email@qq.com
+   set EMAIL_PWD=your-smtp-auth-code
+   set RECEIVER_EMAILS=target1@xxx.com;target2@xxx.com
+   ```
+
+4. **参数自定义**（可选，修改代码中常量）：
+   - `START_PAGE`/`END_PAGE`：爬取页码范围（默认1-6页）
+   - `MAX_PAGES_PER_SESSION`：每次会话最大爬取页数（默认2页，反反爬用）
+   - `SITE_URL`/`SITE_URL_INTERNSHIP`：目标网站URL（可替换为其他招聘网站）
+
+
+## 使用方法
+
+直接运行主程序：
 ```bash
-pip install selenium pandas fake_useragent openpyxl
+python recruitment_spider.py
 ```
 
-2. 下载对应ChromeDriver版本：
-- 确保Chrome浏览器版本与ChromeDriver匹配
-- 将ChromeDriver放在系统PATH或项目目录中
-
-3. 运行主程序：
-```bash
-python job_crawler.py
-```
-
- **🤖 GitHub Actions自动化部署**
-
- 配置文件 (`.github/workflows/daily_crawler.yml`)
-```yaml
-name: Daily Job Crawler
-
-on:
-schedule:
-- cron: '0 20 * * *'# 每天UTC时间20:00运行（北京时间凌晨4:00）
-workflow_dispatch:# 支持手动触发
-
-jobs:
-crawl:
-runs-on: ubuntu-latest
-steps:
-- uses: actions/checkout@v3
-- name: Set up Python
-uses: actions/setup-python@v4
-with:
-python-version: '3.10'
-- name: Install dependencies
-run: |
-sudo apt-get update
-sudo apt-get install -y chromium-browser chromium-chromedriver
-pip install selenium pandas fake_useragent openpyxl
-- name: Run crawler
-env:
-EMAIL_USER: ${{ secrets.EMAIL_USER }}
-EMAIL_PWD: ${{ secrets.EMAIL_PWD }}
-run: python job_crawler.py
-```
-
-**仓库Secrets配置**
-| Secret名称| 描述|
-|---------------|-------------------------------|
-| EMAIL_USER| 发件邮箱地址|
-| EMAIL_PWD| 邮箱授权码（在邮箱设置中生成）|
+程序执行流程：
+1. 初始化浏览器环境
+2. 分页爬取校招/实习信息（每次会话2页）
+3. 筛选2026届相关职位并去重
+4. 保存数据到JSON和Excel
+5. 发送包含新增职位的邮件通知
 
 
-**📬 邮件包含：**
-- 统计摘要面板
-- 新增职位列表（绿色高亮）
-- 更新职位列表（橙色高亮）
-- Excel附件（完整数据）
+## 输出说明
 
-**📂项目结构**
+- **数据文件**：
+  - `campus_jobs.json`：校招历史数据（JSON格式）
+  - `intern_jobs.json`：实习历史数据（JSON格式）
+  - `campus_jobs.xlsx`：校招Excel报表（新增职位黄色高亮）
+  - `intern_jobs.xlsx`：实习Excel报表（新增职位黄色高亮）
 
-```
-job-crawler/
-├── .github/
-│└── workflows/
-│└── daily_crawler.yml# 定时任务配置
-├── src/
-│└── job_crawler.py# 主程序
-├── .gitignore
-├── job_data.json# 历史数据存储
-├── job_data.xlsx# Excel数据文件
-├── requirements.txt# Python依赖
-└── README.md# 项目文档
-```
+- **邮件内容**：
+  - 新增职位数量统计
+  - 公司/岗位/地点/截止时间等关键信息
+  - 职位详情链接
+  - 自动标记2026届相关标签
 
-**⚠️ 注意事项**
 
-1. 请遵守目标网站的Robots协议和使用条款
-2. 合理设置爬取频率避免给目标网站造成负担
-3. 邮箱授权码不同于登录密码，需在邮箱设置中专门生成
-4. 定时任务时间需考虑时区差异（GitHub Actions使用UTC时间）
+## 注意事项
 
-**未来扩展**
+- **网站合规性**：
+  - 请遵守目标网站的`robots.txt`协议和使用条款
+  - 合理设置爬取频率，避免给服务器造成压力
 
-- [ ] 支持多招聘网站爬取
-- [ ] 添加关键词过滤功能
-- [ ] 实现WEB UI控制面板
-- [ ] 增加Telegram/企业微信通知
-- [ ] 生成求职进度跟踪仪表盘
+- **反爬风险**：
+  - 频繁爬取可能导致IP被临时封禁，建议控制每日运行次数
+  - 若网站结构更新（如HTML标签变化），需同步修改代码中的CSS选择器
+
+- **邮箱配置**：
+  - QQ邮箱需在「设置→账户」中开启「SMTP服务」并获取授权码
+  - 其他邮箱（如163）需修改代码中`smtp_server`和`smtp_port`（例如163邮箱为`smtp.163.com:465`）
+
+
+## 许可证
+
+本项目采用MIT许可证，详情见 [LICENSE](LICENSE) 文件。
+
+
+## 致谢
+
+- 基于Selenium实现自动化爬取
+- 感谢开源社区提供的各类依赖库支持
+
+如有问题或建议，欢迎提交Issue或PR！
