@@ -106,6 +106,7 @@ python recruitment_spider.py
   - 公司/岗位/地点/截止时间等关键信息
   - 职位详情链接
   - 自动标记2026届相关标签
+  - **邮件内容例子展示截图：**
   - ![QQ邮箱功能截图](https://raw.githubusercontent.com/dhllovew/job-crawler/master/QQ邮箱功能截图.png)
 
 ## 后期开发
