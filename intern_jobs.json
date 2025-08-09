@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-08-08T15:50:51.041239",
+  "last_update": "2025-08-09T15:46:24.784272",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5168,7 +5168,39 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-08-08T02:47:37.150469"
+    },
+    "阿斯顿·马丁-市场部实习生": {
+      "job_type": "实习",
+      "company": "阿斯顿·马丁",
+      "company_type": "外企",
+      "location": "上海市",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "市场部实习生",
+      "update_time": "2025-08-09",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/FNu4SZWnlSNTvGsfH8l_YA",
+      "notice": "https://mp.weixin.qq.com/s/FNu4SZWnlSNTvGsfH8l_YA",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-09T15:45:12.441964"
+    },
+    "网易云音乐2026活动策划实习生-活动策划运营实习生": {
+      "job_type": "实习",
+      "company": "网易云音乐2026活动策划实习生",
+      "company_type": "民企",
+      "location": "北京市",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "活动策划运营实习生",
+      "update_time": "2025-08-09",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/cmlzmtLGWrROmz6NBcMhkw",
+      "notice": "https://mp.weixin.qq.com/s/cmlzmtLGWrROmz6NBcMhkw",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-09T15:45:12.569324"
     }
   },
-  "last_clean_time": "2025-08-08T15:49:20.674492"
+  "last_clean_time": "2025-08-09T15:45:03.179412"
 }
