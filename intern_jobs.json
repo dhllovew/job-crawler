@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-08-09T15:46:24.784272",
+  "last_update": "2025-08-10T15:45:48.043394",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5200,7 +5200,39 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-08-09T15:45:12.569324"
+    },
+    "大千影业-实习生": {
+      "job_type": "实习",
+      "company": "大千影业",
+      "company_type": "民企",
+      "location": "北京、上海、杭州、成都、长沙",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "实习生",
+      "update_time": "2025-08-10",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/CZ1pEvRMDmQLiT9tLftrOw",
+      "notice": "https://mp.weixin.qq.com/s/CZ1pEvRMDmQLiT9tLftrOw",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-10T15:44:35.908261"
+    },
+    "思瑞测量-补录岗位-技术支持工程师、方案顾问;": {
+      "job_type": "实习",
+      "company": "思瑞测量-补录岗位",
+      "company_type": "民企",
+      "location": "深圳苏州无锡宁波长沙武汉济南",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "技术支持工程师、方案顾问;",
+      "update_time": "2025-08-10",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/TKF-taZtm51o1eXmxzhdPA",
+      "notice": "https://mp.weixin.qq.com/s/TKF-taZtm51o1eXmxzhdPA",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-10T15:44:36.039027"
     }
   },
-  "last_clean_time": "2025-08-09T15:45:03.179412"
+  "last_clean_time": "2025-08-10T15:44:25.847175"
 }
