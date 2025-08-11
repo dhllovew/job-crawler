@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-08-10T15:45:48.043394",
+  "last_update": "2025-08-11T15:50:13.320574",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5232,7 +5232,55 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-08-10T15:44:36.039027"
+    },
+    "九坤-校园大使": {
+      "job_type": "实习",
+      "company": "九坤",
+      "company_type": "民企",
+      "location": "全国",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "校园大使",
+      "update_time": "2025-08-11",
+      "deadline": "招满为止",
+      "links": "https://app.mokahr.com/campus_apply/ubiquantrecruit/37031#/job/bee603c7-bc82-4f17-a6a1-fe87b7007556?from=qrcode&isRecommendation=false",
+      "notice": "https://mp.weixin.qq.com/s/0xXw5sjjiFMhI8CHipBTSg",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-11T15:48:47.182011"
+    },
+    "广州番禺人才-实习生": {
+      "job_type": "实习",
+      "company": "广州番禺人才",
+      "company_type": "央国企",
+      "location": "广州",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "实习生",
+      "update_time": "2025-08-11",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/MgtKAJOfR0GQ0_6MKvS0jg",
+      "notice": "https://mp.weixin.qq.com/s/MgtKAJOfR0GQ0_6MKvS0jg",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-11T15:48:47.323687"
+    },
+    "金元证券-自营业务风险管理实习生": {
+      "job_type": "实习",
+      "company": "金元证券",
+      "company_type": "央国企",
+      "location": "海口市",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "自营业务风险管理实习生",
+      "update_time": "2025-08-11",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/xBiDCcp_aSfXi1nluNCGUA",
+      "notice": "https://mp.weixin.qq.com/s/xBiDCcp_aSfXi1nluNCGUA",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-11T15:48:47.461790"
     }
   },
-  "last_clean_time": "2025-08-10T15:44:25.847175"
+  "last_clean_time": "2025-08-11T15:48:33.025575"
 }
