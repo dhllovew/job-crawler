@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-08-11T15:50:13.320574",
+  "last_update": "2025-08-12T15:49:11.134442",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5280,7 +5280,55 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-08-11T15:48:47.461790"
+    },
+    "湖南卫视-导演组,执行组,后期剪辑组,宣传组": {
+      "job_type": "实习",
+      "company": "湖南卫视",
+      "company_type": "央国企",
+      "location": "长沙",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "导演组,执行组,后期剪辑组,宣传组",
+      "update_time": "2025-08-12",
+      "deadline": "招满为止",
+      "links": "https://app.mokahr.com/campus-recruitment/hntv/150532?locale=zh-CN#/",
+      "notice": "https://mp.weixin.qq.com/s/9ouRFcpmmB8TUg6I9wsv6A",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-12T15:47:52.098259"
+    },
+    "方兴世纪科技-国际业务方向,项目管理方向,行政管理方向": {
+      "job_type": "实习",
+      "company": "方兴世纪科技",
+      "company_type": "民企",
+      "location": "南通",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "国际业务方向,项目管理方向,行政管理方向",
+      "update_time": "2025-08-12",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/ZYxwyUGJylxbLoVuDx2taA",
+      "notice": "https://mp.weixin.qq.com/s/ZYxwyUGJylxbLoVuDx2taA",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-12T15:47:52.229722"
+    },
+    "清泉石2025投研实习生招聘-研究岗实习生": {
+      "job_type": "实习",
+      "company": "清泉石2025投研实习生招聘",
+      "company_type": "民企",
+      "location": "上海",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "研究岗实习生",
+      "update_time": "2025-08-12",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/J2mWN15RLiGKZ6TRt6LiDg",
+      "notice": "https://mp.weixin.qq.com/s/J2mWN15RLiGKZ6TRt6LiDg",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-12T15:47:52.358340"
     }
   },
-  "last_clean_time": "2025-08-11T15:48:33.025575"
+  "last_clean_time": "2025-08-12T15:47:41.408577"
 }
