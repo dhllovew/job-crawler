@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-08-12T15:49:11.134442",
+  "last_update": "2025-08-13T15:43:17.848652",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5328,7 +5328,55 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-08-12T15:47:52.358340"
+    },
+    "湖北文旅黄冈公司-实习生": {
+      "job_type": "实习",
+      "company": "湖北文旅黄冈公司",
+      "company_type": "央国企",
+      "location": "黄冈市",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "实习生",
+      "update_time": "2025-08-13",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/9rq2wmeBSfcJTHJchmjqgw",
+      "notice": "https://mp.weixin.qq.com/s/9rq2wmeBSfcJTHJchmjqgw",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-13T15:41:56.849304"
+    },
+    "安恒信息-战略伙伴行销/售前,区域行销": {
+      "job_type": "实习",
+      "company": "安恒信息",
+      "company_type": "民企",
+      "location": "北京市,上海市,济南市",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "战略伙伴行销/售前,区域行销",
+      "update_time": "2025-08-13",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/DDrw2WZa1Lm_WE8tQ-UyWA",
+      "notice": "https://mp.weixin.qq.com/s/DDrw2WZa1Lm_WE8tQ-UyWA",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-13T15:41:56.986224"
+    },
+    "深圳欢乐谷-抖音拍摄实习生": {
+      "job_type": "实习",
+      "company": "深圳欢乐谷",
+      "company_type": "民企",
+      "location": "深圳",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "抖音拍摄实习生",
+      "update_time": "2025-08-13",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/gppqtQXz04G0keq3E6HfYA",
+      "notice": "https://mp.weixin.qq.com/s/gppqtQXz04G0keq3E6HfYA",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-13T15:41:57.124836"
     }
   },
-  "last_clean_time": "2025-08-12T15:47:41.408577"
+  "last_clean_time": "2025-08-13T15:41:46.103109"
 }
