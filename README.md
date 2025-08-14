@@ -130,11 +130,6 @@ python recruitment_spider.py
   - 其他邮箱（如163）需修改代码中`smtp_server`和`smtp_port`（例如163邮箱为`smtp.163.com:465`）
 
 
-## 许可证
-
-本项目采用MIT许可证，详情见 [LICENSE](LICENSE) 文件。
-
-
 ## 致谢
 
 - 基于Selenium实现自动化爬取
