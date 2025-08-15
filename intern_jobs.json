@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-08-14T15:49:30.281330",
+  "last_update": "2025-08-15T15:46:45.792700",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5376,7 +5376,23 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-08-13T15:41:57.124836"
+    },
+    "麒麟软件-计算机、软件工程、电子信息、信息安全、控制工程等相关专业;": {
+      "job_type": "实习",
+      "company": "麒麟软件",
+      "company_type": "央国企",
+      "location": "北京 天津 长沙上海广州郑州",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "计算机、软件工程、电子信息、信息安全、控制工程等相关专业;",
+      "update_time": "2025-08-15",
+      "deadline": "招满为止",
+      "links": "https://kylinos.zhiye.com/intern",
+      "notice": "https://mp.weixin.qq.com/s/1ETg8ivNBxmnNKtO4Vq53Q",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-15T15:45:19.780560"
     }
   },
-  "last_clean_time": "2025-08-14T15:47:47.124351"
+  "last_clean_time": "2025-08-15T15:45:08.729592"
 }
