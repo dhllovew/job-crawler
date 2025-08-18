@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-08-17T15:44:53.320007",
+  "last_update": "2025-08-18T15:49:56.487108",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5408,7 +5408,39 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-08-17T15:43:38.711380"
+    },
+    "兴华基金-交易管理部--交易员助理,固收研究部--信用研究助理,权益研究部--权益研究员,基金运营部--基金会": {
+      "job_type": "实习",
+      "company": "兴华基金",
+      "company_type": "民企",
+      "location": "北京市,青岛市",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "交易管理部--交易员助理,固收研究部--信用研究助理,权益研究部--权益研究员,基金运营部--基金会",
+      "update_time": "2025-08-18",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/NNZIT3Kp7H6kvYvaT1AzjQ",
+      "notice": "https://mp.weixin.qq.com/s/NNZIT3Kp7H6kvYvaT1AzjQ",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-18T15:48:28.832856"
+    },
+    "喜番喜剧-视觉设计(实习生),艺人宣传(实习生)": {
+      "job_type": "实习",
+      "company": "喜番喜剧",
+      "company_type": "民企",
+      "location": "北京",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "视觉设计(实习生),艺人宣传(实习生)",
+      "update_time": "2025-08-18",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/WueXHSwunBWywQ4wA4LEZA",
+      "notice": "https://mp.weixin.qq.com/s/WueXHSwunBWywQ4wA4LEZA",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-18T15:48:28.960450"
     }
   },
-  "last_clean_time": "2025-08-17T15:43:29.217878"
+  "last_clean_time": "2025-08-18T15:48:16.950046"
 }

@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-08-17T15:43:24.991352",
+  "last_update": "2025-08-18T15:48:12.657001",
   "jobs": {
     "国科微电子-芯片类、模拟类、算法类、硬件类、软件类测试类、工艺类、销售类、职能类;": {
       "job_type": "校招",
@@ -9072,7 +9072,103 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-08-17T15:42:15.067491"
+    },
+    "蚂蚁集团2026届秋季校园招聘开启！-技术：算法、基础研发、应用等；非技术：产品，运营，数据，解决方案，设计，金融等": {
+      "job_type": "校招",
+      "company": "蚂蚁集团2026届秋季校园招聘开启！",
+      "company_type": "民企",
+      "location": "杭州 北京 上海 深圳 重庆 广州 西安 武汉 天津 南京 成都",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "技术：算法、基础研发、应用等；非技术：产品，运营，数据，解决方案，设计，金融等",
+      "update_time": "2025-08-18",
+      "deadline": "招满为止",
+      "links": "https://talent.antgroup.com/campus/home",
+      "notice": "https://mp.weixin.qq.com/s/3SxPTLag3TqqcoP72ibapA?scene=1",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-18T15:46:57.469030"
+    },
+    "亿航智能-飞手&助理测试工程师&测试工程师,运控员&安全员": {
+      "job_type": "校招",
+      "company": "亿航智能",
+      "company_type": "民企",
+      "location": "广州",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "飞手&助理测试工程师&测试工程师,运控员&安全员",
+      "update_time": "2025-08-18",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/4LKtIYx4_kpCATfVokpfMg",
+      "notice": "https://mp.weixin.qq.com/s/4LKtIYx4_kpCATfVokpfMg",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-18T15:46:57.598106"
+    },
+    "天演资本-量化研究员(中低频股票,低延时期货方向),基金运营实习": {
+      "job_type": "校招",
+      "company": "天演资本",
+      "company_type": "民企",
+      "location": "上海",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "量化研究员(中低频股票,低延时期货方向),基金运营实习",
+      "update_time": "2025-08-18",
+      "deadline": "招满为止",
+      "links": "https://app.mokahr.com/campus-recruitment/tianyancapital/98902?locale=zh-CN#/",
+      "notice": "https://mp.weixin.qq.com/s/y-htOQwmqd3Y0MzvHULYMw",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-18T15:46:57.726888"
+    },
+    "武汉红星杨-销售工程师,机械工程师/首席科学家,光学工程师/首席科学家,精密运动控制工程师/首席科学家,软件工程": {
+      "job_type": "校招",
+      "company": "武汉红星杨",
+      "company_type": "民企",
+      "location": "武汉",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "销售工程师,机械工程师/首席科学家,光学工程师/首席科学家,精密运动控制工程师/首席科学家,软件工程",
+      "update_time": "2025-08-18",
+      "deadline": "招满为止",
+      "links": "https://www.whhxykj.com/",
+      "notice": "https://mp.weixin.qq.com/s/tuhIY_7F4oEXygCXWqnHpQ",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-18T15:46:57.860684"
+    },
+    "中国人民健康保险-安全管理岗,大数据分析岗,需求管理岗,规划管理岗,统计报送岗,综合审计岗,市场研究岗,经营企划岗": {
+      "job_type": "校招",
+      "company": "中国人民健康保险",
+      "company_type": "央国企",
+      "location": "全国",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "安全管理岗,大数据分析岗,需求管理岗,规划管理岗,统计报送岗,综合审计岗,市场研究岗,经营企划岗",
+      "update_time": "2025-08-18",
+      "deadline": "招满为止",
+      "links": "https://picc.zhiye.com/custom/campus?ky=&c1=&c2=130&d=-1&c=",
+      "notice": "https://mp.weixin.qq.com/s/A6xniBHnCKvsQn6ps8fHlw",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-18T15:46:57.992601"
+    },
+    "华安保险-核保管理,理赔管理,客户服务!统计分析,市场营销,精算,投资研究,风险管理,法律合规,财务管理": {
+      "job_type": "校招",
+      "company": "华安保险",
+      "company_type": "央国企",
+      "location": "全国",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "核保管理,理赔管理,客户服务!统计分析,市场营销,精算,投资研究,风险管理,法律合规,财务管理",
+      "update_time": "2025-08-18",
+      "deadline": "招满为止",
+      "links": "https://xyz.51job.com/consumer/pc/home/index?ctmid=8869175",
+      "notice": "https://mp.weixin.qq.com/s/1HUa0J4i3ZZeMREaGEhhmw",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-18T15:46:58.133421"
     }
   },
-  "last_clean_time": "2025-08-17T15:41:57.271434"
+  "last_clean_time": "2025-08-18T15:46:44.999754"
 }
