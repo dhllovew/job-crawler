@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-08-20T15:47:40.027385",
+  "last_update": "2025-08-21T15:46:59.602622",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5440,7 +5440,23 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-08-18T15:48:28.960450"
+    },
+    "特斯拉T-STAR-销售交付服务上海研发创新中心智能制造信息技术供应链职能支持基础建设环境康安全安保": {
+      "job_type": "实习",
+      "company": "特斯拉T-STAR",
+      "company_type": "外企",
+      "location": "北京 上海 天津 重庆安徽福建甘肃广东广西贵州海南河北河南黑龙江 湖北湖南吉林江苏江西",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "销售交付服务上海研发创新中心智能制造信息技术供应链职能支持基础建设环境康安全安保",
+      "update_time": "2025-08-21",
+      "deadline": "招满为止",
+      "links": "https://app.mokahr.com/campus-recruitment/tesla/41460#/jobs?project0=100104325&page=1&anchorName=jobsList",
+      "notice": "https://mp.weixin.qq.com/s/rA1MHWjm50cM7BV79jhIlw",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-21T15:45:41.841041"
     }
   },
-  "last_clean_time": "2025-08-20T15:46:00.360963"
+  "last_clean_time": "2025-08-21T15:45:31.924912"
 }
