@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-08-23T15:45:32.568003",
+  "last_update": "2025-08-24T15:43:29.911570",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5504,7 +5504,23 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-08-22T16:19:22.739294"
+    },
+    "极客未来-技术菁英实习生-产品实习生前端研发实习生后端研发实习生": {
+      "job_type": "实习",
+      "company": "极客未来-技术菁英实习生",
+      "company_type": "民企",
+      "location": "成都",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "产品实习生前端研发实习生后端研发实习生",
+      "update_time": "2025-08-24",
+      "deadline": "招满为止",
+      "links": "https://geek.m.zhiye.com/#/jobs?jc=2",
+      "notice": "https://mp.weixin.qq.com/s/gfyp5UFR0VobpY9IjJyDDA",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-24T15:42:12.520613"
     }
   },
-  "last_clean_time": "2025-08-23T15:43:51.400905"
+  "last_clean_time": "2025-08-24T15:42:01.169047"
 }
