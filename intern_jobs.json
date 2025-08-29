@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-08-28T15:46:11.714147",
+  "last_update": "2025-08-29T15:43:55.557973",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5536,7 +5536,23 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-08-25T15:46:05.162867"
+    },
+    "中国联合工程有限公司薪火计划-科技研发和工程设计岗 策划咨询岗职能管理岗;": {
+      "job_type": "实习",
+      "company": "中国联合工程有限公司薪火计划",
+      "company_type": "央国企",
+      "location": "杭州",
+      "recruitment_type": "暑假实习",
+      "target": "2026年毕业生",
+      "position": "科技研发和工程设计岗 策划咨询岗职能管理岗;",
+      "update_time": "2025-08-29",
+      "deadline": "招满为止",
+      "links": "https://chinacuc.zhiye.com/Intern",
+      "notice": "https://mp.weixin.qq.com/s/mbVHs9EKEgWB5iKUIiQn1g",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-08-29T15:42:38.141573"
     }
   },
-  "last_clean_time": "2025-08-28T15:44:37.185265"
+  "last_clean_time": "2025-08-29T15:42:22.525409"
 }
