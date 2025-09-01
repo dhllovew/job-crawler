@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-08-31T15:42:21.882689",
+  "last_update": "2025-09-01T15:44:07.421627",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5552,7 +5552,23 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-08-29T15:42:38.141573"
+    },
+    "CIC灼识咨询-咨询部实习生(可转正)": {
+      "job_type": "实习",
+      "company": "CIC灼识咨询",
+      "company_type": "民企",
+      "location": "北京 上海",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "咨询部实习生(可转正)",
+      "update_time": "2025-09-01",
+      "deadline": "招满为止",
+      "links": "https://www.cninsights.com/job-cn",
+      "notice": "https://mp.weixin.qq.com/s/bCy2KGYMqI2aUCEoA1kSGw",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-09-01T15:42:51.291766"
     }
   },
-  "last_clean_time": "2025-08-31T15:40:48.093800"
+  "last_clean_time": "2025-09-01T15:42:41.125356"
 }
