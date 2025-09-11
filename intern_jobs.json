@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-09-10T15:44:57.548821",
+  "last_update": "2025-09-11T15:43:26.661930",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5568,7 +5568,23 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-09-01T15:42:51.291766"
+    },
+    "中庚基金-投资部：行业研究实习生": {
+      "job_type": "实习",
+      "company": "中庚基金",
+      "company_type": "民企",
+      "location": "上海",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "投资部：行业研究实习生",
+      "update_time": "2025-09-11",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/bLBPo8fsCIHk59DluNnTwQ?poc_token=HACOwmijGD5-pJVDwFWkWspRapTdAQW4nGpULMAD",
+      "notice": "https://mp.weixin.qq.com/s/bLBPo8fsCIHk59DluNnTwQ?poc_token=HACOwmijGD5-pJVDwFWkWspRapTdAQW4nGpULMAD",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-09-11T15:42:06.481354"
     }
   },
-  "last_clean_time": "2025-09-10T15:43:29.330613"
+  "last_clean_time": "2025-09-11T15:41:54.021529"
 }
