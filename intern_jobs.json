@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-09-14T15:41:21.866258",
+  "last_update": "2025-09-15T15:45:38.902309",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5584,7 +5584,23 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-09-11T15:42:06.481354"
+    },
+    "吉祥航空-实习生岗位": {
+      "job_type": "实习",
+      "company": "吉祥航空",
+      "company_type": "民企",
+      "location": "上海",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "实习生岗位",
+      "update_time": "2025-09-15",
+      "deadline": "招满为止",
+      "links": "https://wecruit.hotjob.cn/SU62ea129d0dcad4075c8525ca/pb/school.html",
+      "notice": "https://mp.weixin.qq.com/s/LLUM-ZkZJ4NaGaBWHklF6Q",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-09-15T15:44:21.464788"
     }
   },
-  "last_clean_time": "2025-09-14T15:39:47.132119"
+  "last_clean_time": "2025-09-15T15:44:09.501465"
 }
