@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-10-04T15:39:38.568016",
+  "last_update": "2025-10-05T15:39:44.565888",
   "jobs": {
     "国科微电子-芯片类、模拟类、算法类、硬件类、软件类测试类、工艺类、销售类、职能类;": {
       "job_type": "校招",
@@ -56353,22 +56353,6 @@
       "notes": "-",
       "crawl_time": "2025-09-23T15:42:48.245515"
     },
-    "国网山东省电力公司-电工类：电气工程 电力系统及其自动化 高电压与绝缘技术；计算机类：计算机科学与技术 软件工程；通信类：信息与通信工程 电子与通信工程": {
-      "job_type": "校招",
-      "company": "国网山东省电力公司",
-      "company_type": "央国企",
-      "location": "济南,青岛,淄博,枣庄,东营,烟台,潍坊,济宁,泰安,威海,日照,临沂,德州,聊城,滨州,菏泽",
-      "recruitment_type": "秋招",
-      "target": "2026届",
-      "position": "电工类：电气工程 电力系统及其自动化 高电压与绝缘技术；计算机类：计算机科学与技术 软件工程；通信类：信息与通信工程 电子与通信工程",
-      "update_time": "2025-09-23",
-      "deadline": "2025-10-05",
-      "links": "https://mp.weixin.qq.com/s/SBnJ4INAXfYE7wiChupBdw",
-      "notice": "https://mp.weixin.qq.com/s/SBnJ4INAXfYE7wiChupBdw",
-      "referral": "-",
-      "notes": "-",
-      "crawl_time": "2025-09-23T15:42:48.382426"
-    },
     "华侨城-人力资源管理岗 综合监督岗 纪检岗 党务岗 行政事务岗 法律法规岗 共享核算岗 投资测算岗 财务会计岗 成本采购岗 收入核算岗 财务管理岗 拓展策划岗 短视频运营岗 新媒体推广岗 旅游产品研发岗 品牌管理岗 项目策划岗 投资拓展岗 计划运营岗 运营管理岗 供应链管理岗 企业管理岗 经营分析岗 体育管理岗 节能环保管理岗 环境管理岗 嵌入式工程岗 机械工程岗 算法工程岗 工程管理岗 数字化信息岗 技术管理岗 安全管理岗": {
       "job_type": "校招",
       "company": "华侨城",
@@ -56624,22 +56608,6 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-09-24T15:42:32.763992"
-    },
-    "国网冀北电力-电工类": {
-      "job_type": "校招",
-      "company": "国网冀北电力",
-      "company_type": "央国企",
-      "location": "唐山,秦皇岛,张家口,承德,廊坊,北京,西安",
-      "recruitment_type": "秋招",
-      "target": "2026届",
-      "position": "电工类",
-      "update_time": "2025-09-24",
-      "deadline": "2025-10-05",
-      "links": "https://zhaopin.sgcc.com.cn/sgcchr/static/unitPart.html?bullet_id=4d507624ee2f423fb15db797b61fa147&particulars=flase",
-      "notice": "https://zhaopin.sgcc.com.cn/sgcchr/static/unitPart.html?bullet_id=4d507624ee2f423fb15db797b61fa147&particulars=flase",
-      "referral": "-",
-      "notes": "-",
-      "crawl_time": "2025-09-24T15:42:32.888047"
     },
     "成都农商银行-总行管理培训生，业技融合岗，储备培训生，总行金融科技岗，分支行综合金融服务岗，分支行综合柜员岗（中心城区），行综合柜员岗（县市新城 / 分行）": {
       "job_type": "校招",
@@ -61280,7 +61248,103 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-10-04T15:38:43.981585"
+    },
+    "新日月-管培生：职能服务类、物业管理类、供应链管理类、康养服务类": {
+      "job_type": "校招",
+      "company": "新日月",
+      "company_type": "民企",
+      "location": "宁波",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "管培生：职能服务类、物业管理类、供应链管理类、康养服务类",
+      "update_time": "2025-10-05",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/o3iIINTfll1GiqVWCbd8wQ",
+      "notice": "https://mp.weixin.qq.com/s/o3iIINTfll1GiqVWCbd8wQ",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-10-05T15:38:43.369210"
+    },
+    "河南凤宝重工科技有限公司-材料类、机械制造类、电气类、数控类、综合管理类": {
+      "job_type": "校招",
+      "company": "河南凤宝重工科技有限公司",
+      "company_type": "民企",
+      "location": "河南林州",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "材料类、机械制造类、电气类、数控类、综合管理类",
+      "update_time": "2025-10-05",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/rrD7o0JKhrSnwi7O2wtFBg",
+      "notice": "https://mp.weixin.qq.com/s/rrD7o0JKhrSnwi7O2wtFBg",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-10-05T15:38:43.496811"
+    },
+    "荆州市城市发展控股集团有限公司-运营管理(运营、策划、管理类)财务金融(财务、审计、融资方向)信息化管理员;": {
+      "job_type": "校招",
+      "company": "荆州市城市发展控股集团有限公司",
+      "company_type": "央国企",
+      "location": "荆州",
+      "recruitment_type": "秋招",
+      "target": "2025和2026年毕业生",
+      "position": "运营管理(运营、策划、管理类)财务金融(财务、审计、融资方向)信息化管理员;",
+      "update_time": "2025-10-05",
+      "deadline": "招满为止",
+      "links": "https://jzrsks.pzhl.net/index.php/exam/?EXAMID=8381",
+      "notice": "https://mp.weixin.qq.com/s/tNs6KVG1AQ-0YvdG_VyrRQ",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-10-05T15:38:43.623317"
+    },
+    "常州制药-合成研究员、制剂研究员、外贸专员、国际注册员、质量工程师、药品检验员、生产技术员、EHS专员、制剂营销管培": {
+      "job_type": "校招",
+      "company": "常州制药",
+      "company_type": "央国企",
+      "location": "常州、南通",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "合成研究员、制剂研究员、外贸专员、国际注册员、质量工程师、药品检验员、生产技术员、EHS专员、制剂营销管培",
+      "update_time": "2025-10-05",
+      "deadline": "招满为止",
+      "links": "https://app.mokahr.com/campus-recruitment/sphchina/150180#/",
+      "notice": "https://mp.weixin.qq.com/s/kaGMzfOqvmTM9VUGU8TbbA",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-10-05T15:38:43.749398"
+    },
+    "美联股份-销售助理、助理结构工程师、助理报价工程师、助理详图工程师、项目经理助理": {
+      "job_type": "校招",
+      "company": "美联股份",
+      "company_type": "民企",
+      "location": "上海",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "销售助理、助理结构工程师、助理报价工程师、助理详图工程师、项目经理助理",
+      "update_time": "2025-10-05",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/cvCnfoIqCFzM4rMWbTAhEA",
+      "notice": "https://mp.weixin.qq.com/s/cvCnfoIqCFzM4rMWbTAhEA",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-10-05T15:38:43.879296"
+    },
+    "New Aim新目标-电商运营、采购、销售、HR、财务、管培生（电商运营/采购/IT）": {
+      "job_type": "校招",
+      "company": "New Aim新目标",
+      "company_type": "外企",
+      "location": "广州",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "电商运营、采购、销售、HR、财务、管培生（电商运营/采购/IT）",
+      "update_time": "2025-10-05",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/qZZ_cDAFeqbB37L_asnQ1w",
+      "notice": "https://mp.weixin.qq.com/s/qZZ_cDAFeqbB37L_asnQ1w",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-10-05T15:38:44.007377"
     }
   },
-  "last_clean_time": "2025-10-04T15:38:32.996237"
+  "last_clean_time": "2025-10-05T15:38:31.266134"
 }
