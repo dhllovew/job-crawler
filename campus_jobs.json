@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-10-07T15:44:23.488334",
+  "last_update": "2025-10-08T15:48:58.425914",
   "jobs": {
     "国科微电子-芯片类、模拟类、算法类、硬件类、软件类测试类、工艺类、销售类、职能类;": {
       "job_type": "校招",
@@ -33649,22 +33649,6 @@
       "notes": "-",
       "crawl_time": "2025-09-08T15:43:17.837363"
     },
-    "华夏银行-管培生岗 经办岗 （经济金融专业 数学统计专业 信息科技专业 财务会计专业 相关产业专业 法律专业 其他专业）": {
-      "job_type": "校招",
-      "company": "华夏银行",
-      "company_type": "银行",
-      "location": "全国",
-      "recruitment_type": "秋招",
-      "target": "2026届",
-      "position": "管培生岗 经办岗 （经济金融专业 数学统计专业 信息科技专业 财务会计专业 相关产业专业 法律专业 其他专业）",
-      "update_time": "2025-09-08",
-      "deadline": "2025-10-08",
-      "links": "https://wecruit.hotjob.cn/SU645b0d18bef57c0907e9fbc8/pb/school.html",
-      "notice": "https://mp.weixin.qq.com/s/rE4ytrR1lPZoqK6u5Qm-vQ",
-      "referral": "-",
-      "notes": "-",
-      "crawl_time": "2025-09-08T15:43:17.964844"
-    },
     "交通银行-金融科技职位（软件开发方向、软件测试方向、IT 系统管理方向、业务分析师方向、数据管理与分析方向）；总行应届生项目（总行部门方向、境外机构方向）；金融服务中心、信用卡中心；省直分行职位（金融 “五篇大文章” 方向、金融科技方向、营销方向、金科储备生方向、营运方向）。": {
       "job_type": "校招",
       "company": "交通银行",
@@ -56225,22 +56209,6 @@
       "notes": "-",
       "crawl_time": "2025-09-23T15:42:47.291698"
     },
-    "国网湖北-电工类、计算机科学与技术、软件工程、信息与通信工程、电子与通信工程等专业": {
-      "job_type": "校招",
-      "company": "国网湖北",
-      "company_type": "央国企",
-      "location": "武汉,黄石,十堰,宜昌,襄阳,鄂州,荆门,孝感,荆州,黄冈,咸宁,随州,恩施",
-      "recruitment_type": "秋招",
-      "target": "2026届",
-      "position": "电工类、计算机科学与技术、软件工程、信息与通信工程、电子与通信工程等专业",
-      "update_time": "2025-09-23",
-      "deadline": "2025-10-08",
-      "links": "https://zhaopin.sgcc.com.cn/sgcchr/static/unitPart.html?bullet_id=4763ec89d840418c9ae97c2810dd4f39&particulars=flase",
-      "notice": "https://zhaopin.sgcc.com.cn/sgcchr/static/unitPart.html?bullet_id=4763ec89d840418c9ae97c2810dd4f39&particulars=flase",
-      "referral": "-",
-      "notes": "-",
-      "crawl_time": "2025-09-23T15:42:47.425412"
-    },
     "中国海外-工程技术类 土木工程 道路桥梁与渡河工程 水利水电工程 工程管理 工程造价 公路工程 桥梁工程 隧道工程 地质工程 铁道工程 机械工程 语言文学类 英语 法语 俄语 葡萄牙语 塞尔维亚语 克罗地亚语 汉语言文学 新闻学 法律类 法学 国际法学 物流贸易类 物流管理 物流工程 国际经济与贸易": {
       "job_type": "校招",
       "company": "中国海外",
@@ -61920,7 +61888,71 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-10-07T15:43:29.990271"
+    },
+    "湖南钢铁（湘钢）-冶金/材料类、机械类、电气类、计算机类、交通运输类、建筑类、安全环保类、职能管理类": {
+      "job_type": "校招",
+      "company": "湖南钢铁（湘钢）",
+      "company_type": "央国企",
+      "location": "湘潭",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "冶金/材料类、机械类、电气类、计算机类、交通运输类、建筑类、安全环保类、职能管理类",
+      "update_time": "2025-10-08",
+      "deadline": "招满为止",
+      "links": "https://xyzp.hnxg.com.cn/#/",
+      "notice": "https://mp.weixin.qq.com/s/bLwRx3YbWeFsg-1VCdiVHg",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-10-08T15:43:28.712129"
+    },
+    "家辉教育-教学团队、研究院团队、竞赛教练团队": {
+      "job_type": "校招",
+      "company": "家辉教育",
+      "company_type": "民企",
+      "location": "上海",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "教学团队、研究院团队、竞赛教练团队",
+      "update_time": "2025-10-08",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/GYUJTP0RD3EyW5tQN_O_Kg",
+      "notice": "https://mp.weixin.qq.com/s/GYUJTP0RD3EyW5tQN_O_Kg",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-10-08T15:43:28.840577"
+    },
+    "豫园珠宝时尚集团-管培生：集团销售运营管理岗、AI星世代、终端零售销售管理岗": {
+      "job_type": "校招",
+      "company": "豫园珠宝时尚集团",
+      "company_type": "民企",
+      "location": "上海、北京、四川、山东等",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "管培生：集团销售运营管理岗、AI星世代、终端零售销售管理岗",
+      "update_time": "2025-10-08",
+      "deadline": "招满为止",
+      "links": "https://webapp.zhaopin.com/2023/hd/shyyl0825ZL81814/#/",
+      "notice": "https://mp.weixin.qq.com/s/bPQZYixjvvCKsH31bi8vVw",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-10-08T15:43:28.965256"
+    },
+    "云南省能源投资集团有限公司-新能源板块、电力板块、新材料板块、天然气板块、煤炭板块、国际板块、产融板块、综合板块": {
+      "job_type": "校招",
+      "company": "云南省能源投资集团有限公司",
+      "company_type": "央国企",
+      "location": "云南省",
+      "recruitment_type": "秋招",
+      "target": "2025和2026年毕业生",
+      "position": "新能源板块、电力板块、新材料板块、天然气板块、煤炭板块、国际板块、产融板块、综合板块",
+      "update_time": "2025-10-08",
+      "deadline": "招满为止",
+      "links": "https://www.wjx.cn/vm/mTyicOo.aspx",
+      "notice": "https://jiuye.cugb.edu.cn/Zhaopin/xiaozhao.html?id=b11d9244-e4dc-ff79-c700-5a06e7a63cc7&type=ff8a2ce4-f922-10f4-f3ce-4fa4dc99401a",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-10-08T15:43:29.092566"
     }
   },
-  "last_clean_time": "2025-10-07T15:43:16.463794"
+  "last_clean_time": "2025-10-08T15:43:20.242800"
 }
