@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-10-17T15:45:55.849808",
+  "last_update": "2025-10-18T15:41:48.187405",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5616,7 +5616,23 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-10-15T15:43:08.338099"
+    },
+    "BDO立信-审计、IT审计、税务、咨询、会计、函证": {
+      "job_type": "实习",
+      "company": "BDO立信",
+      "company_type": "民企",
+      "location": "上海、北京、浙江、深圳、湖北、广东、江苏、全国其他",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "审计、IT审计、税务、咨询、会计、函证",
+      "update_time": "2025-10-18",
+      "deadline": "招满为止",
+      "links": "https://bdochina.zhiye.com/intern/jobs",
+      "notice": "https://mp.weixin.qq.com/s/WISaBuskGVHiR3nxRLln3A",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-10-18T15:40:27.852048"
     }
   },
-  "last_clean_time": "2025-10-17T15:44:32.631088"
+  "last_clean_time": "2025-10-18T15:40:18.035880"
 }
