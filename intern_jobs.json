@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-10-19T15:41:24.752451",
+  "last_update": "2025-10-20T15:45:24.868555",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5632,7 +5632,23 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-10-18T15:40:27.852048"
+    },
+    "禅游科技-美术类、产品类、运营类、技术类": {
+      "job_type": "实习",
+      "company": "禅游科技",
+      "company_type": "民企",
+      "location": "深圳",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "美术类、产品类、运营类、技术类",
+      "update_time": "2025-10-20",
+      "deadline": "招满为止",
+      "links": "https://zen-game.jobs.feishu.cn/679976/?spread=5E4W4AQ",
+      "notice": "https://mp.weixin.qq.com/s/Ijk71ufDi0dOjNu12KupWA",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-10-20T15:44:08.607284"
     }
   },
-  "last_clean_time": "2025-10-19T15:39:57.571298"
+  "last_clean_time": "2025-10-20T15:44:01.485435"
 }
