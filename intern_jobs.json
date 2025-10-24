@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-10-23T15:44:14.469383",
+  "last_update": "2025-10-24T15:46:01.008731",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5648,7 +5648,39 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-10-20T15:44:08.607284"
+    },
+    "九方智投-数据类、设计&策划类、市场&用户运营类、金融研发类、技术类、其他职能类、销售类": {
+      "job_type": "实习",
+      "company": "九方智投",
+      "company_type": "民企",
+      "location": "上海",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "数据类、设计&策划类、市场&用户运营类、金融研发类、技术类、其他职能类、销售类",
+      "update_time": "2025-10-24",
+      "deadline": "招满为止",
+      "links": "https://campus.51job.com/jfzt2026/job.html",
+      "notice": "https://mp.weixin.qq.com/s/z1M0IIoit5JuvsmhvB38Pw",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-10-24T15:44:55.284569"
+    },
+    "Klook-校招实习生-技术研发工程师": {
+      "job_type": "实习",
+      "company": "Klook",
+      "company_type": "民企",
+      "location": "深圳",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "校招实习生-技术研发工程师",
+      "update_time": "2025-10-24",
+      "deadline": "招满为止",
+      "links": "https://app.mokahr.com/campus-recruitment/klook/128531?sessionid=#/",
+      "notice": "https://mp.weixin.qq.com/s/uo8erthaAdkBfCNc5ausfg",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-10-24T15:44:55.412817"
     }
   },
-  "last_clean_time": "2025-10-23T15:42:48.095480"
+  "last_clean_time": "2025-10-24T15:44:48.556409"
 }
