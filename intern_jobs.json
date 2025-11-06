@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-11-05T15:46:46.988425",
+  "last_update": "2025-11-06T15:48:30.661297",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5696,7 +5696,23 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-10-25T15:40:27.177661"
+    },
+    "青山资本-实习投资分析师": {
+      "job_type": "实习",
+      "company": "青山资本",
+      "company_type": "民企",
+      "location": "北京",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "实习投资分析师",
+      "update_time": "2025-11-06",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/hvUtuAvwnOdZtm5c-cEmBQ?click_id=16",
+      "notice": "https://mp.weixin.qq.com/s/hvUtuAvwnOdZtm5c-cEmBQ?click_id=16",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-11-06T15:47:15.122129"
     }
   },
-  "last_clean_time": "2025-11-05T15:45:22.645821"
+  "last_clean_time": "2025-11-06T15:47:07.041574"
 }
