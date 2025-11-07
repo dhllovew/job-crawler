@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-11-06T15:48:30.661297",
+  "last_update": "2025-11-07T15:45:20.158665",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5712,7 +5712,23 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-11-06T15:47:15.122129"
+    },
+    "百嘉基金-行业研究岗（先进制造、医药及消费方向）若干，团队助理研究员1人，机构销售岗若干，渠道销售岗若干": {
+      "job_type": "实习",
+      "company": "百嘉基金",
+      "company_type": "民企",
+      "location": "广州",
+      "recruitment_type": "秋招",
+      "target": "2025和2026年毕业生",
+      "position": "行业研究岗（先进制造、医药及消费方向）若干，团队助理研究员1人，机构销售岗若干，渠道销售岗若干",
+      "update_time": "2025-11-07",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/33KXH0QsjDP2AOhuGCPvSQ",
+      "notice": "https://mp.weixin.qq.com/s/33KXH0QsjDP2AOhuGCPvSQ",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-11-07T15:44:06.993459"
     }
   },
-  "last_clean_time": "2025-11-06T15:47:07.041574"
+  "last_clean_time": "2025-11-07T15:43:56.607080"
 }
