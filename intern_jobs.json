@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-11-14T15:44:57.790476",
+  "last_update": "2025-11-15T15:43:28.913446",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5744,7 +5744,23 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-11-13T15:44:52.502381"
+    },
+    "涵德投资-CTA量化研究员实习生": {
+      "job_type": "实习",
+      "company": "涵德投资",
+      "company_type": "民企",
+      "location": "北京",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "CTA量化研究员实习生",
+      "update_time": "2025-11-15",
+      "deadline": "招满为止",
+      "links": "https://app.mokahr.com/campus-recruitment/handetouzi/46040?locale=zh-CN#/",
+      "notice": "https://mp.weixin.qq.com/s/hN4YOixmTcNWeCxmamwMdQ",
+      "referral": "-",
+      "notes": "2026届硕士及以上",
+      "crawl_time": "2025-11-15T15:42:08.674022"
     }
   },
-  "last_clean_time": "2025-11-14T15:43:38.826938"
+  "last_clean_time": "2025-11-15T15:42:00.425824"
 }
