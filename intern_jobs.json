@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-11-15T15:43:28.913446",
+  "last_update": "2025-11-16T15:42:06.621698",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5760,7 +5760,39 @@
       "referral": "-",
       "notes": "2026届硕士及以上",
       "crawl_time": "2025-11-15T15:42:08.674022"
+    },
+    "中国电科第十四研究所-计算机软件类、电子通信类、电磁微波类、机械类、材料类、其他类": {
+      "job_type": "实习",
+      "company": "中国电科第十四研究所",
+      "company_type": "事业单位",
+      "location": "南京",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "计算机软件类、电子通信类、电磁微波类、机械类、材料类、其他类",
+      "update_time": "2025-11-16",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/c4s5MYLr0u-ghEEEiJ6H2w",
+      "notice": "https://mp.weixin.qq.com/s/c4s5MYLr0u-ghEEEiJ6H2w",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-11-16T15:40:56.792416"
+    },
+    "金杜律师事务所-2026年“PROPEL”国际毕业生计划": {
+      "job_type": "实习",
+      "company": "金杜律师事务所",
+      "company_type": "民企",
+      "location": "北京、深圳、广州、上海、成都、杭州、无锡、三亚、海口",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "2026年“PROPEL”国际毕业生计划",
+      "update_time": "2025-11-16",
+      "deadline": "招满为止",
+      "links": "https://kwmcareer1.zhiye.com/4/jobs",
+      "notice": "https://mp.weixin.qq.com/s/PibQuFBUp8Sfs8hOl7dIlg",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-11-16T15:40:56.929578"
     }
   },
-  "last_clean_time": "2025-11-15T15:42:00.425824"
+  "last_clean_time": "2025-11-16T15:40:48.942941"
 }
