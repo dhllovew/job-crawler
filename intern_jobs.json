@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-11-16T15:42:06.621698",
+  "last_update": "2025-11-17T15:48:23.552285",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5792,7 +5792,23 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-11-16T15:40:56.929578"
+    },
+    "国金证券资产管理-资产-ABS存续管理类、资产-交易实习生、资产-资金运营实习生、资产-量化实习生、资产-宏观转债实习生、多资产投资部助理实习生 •": {
+      "job_type": "实习",
+      "company": "国金证券资产管理",
+      "company_type": "民企",
+      "location": "上海",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "资产-ABS存续管理类、资产-交易实习生、资产-资金运营实习生、资产-量化实习生、资产-宏观转债实习生、多资产投资部助理实习生 •",
+      "update_time": "2025-11-17",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/mnOUEwCGD0VvUMv4s9JT1A?scene=1&click_id=95",
+      "notice": "https://mp.weixin.qq.com/s/mnOUEwCGD0VvUMv4s9JT1A?scene=1&click_id=95",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-11-17T15:47:04.778879"
     }
   },
-  "last_clean_time": "2025-11-16T15:40:48.942941"
+  "last_clean_time": "2025-11-17T15:46:54.993536"
 }
