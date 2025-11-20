@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-11-19T15:45:18.143395",
+  "last_update": "2025-11-20T15:47:23.117233",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5808,7 +5808,23 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-11-17T15:47:04.778879"
+    },
+    "积成电子-财务会计实习生专项": {
+      "job_type": "实习",
+      "company": "积成电子",
+      "company_type": "民企",
+      "location": "济南",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "财务会计实习生专项",
+      "update_time": "2025-11-20",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/v5F8FvYWQGlM0RDJ3g3p3Q?click_id=119",
+      "notice": "https://mp.weixin.qq.com/s/v5F8FvYWQGlM0RDJ3g3p3Q?click_id=119",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-11-20T15:46:26.231809"
     }
   },
-  "last_clean_time": "2025-11-19T15:44:12.226943"
+  "last_clean_time": "2025-11-20T15:46:17.180317"
 }
