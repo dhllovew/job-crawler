@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-11-27T15:46:10.529945",
+  "last_update": "2025-11-28T15:45:20.347433",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5920,7 +5920,23 @@
       "referral": "-",
       "notes": "2026届硕士及以上",
       "crawl_time": "2025-11-27T15:45:15.775243"
+    },
+    "学而思-短期班辅导老师": {
+      "job_type": "实习",
+      "company": "学而思",
+      "company_type": "民企",
+      "location": "沈阳,济南,西安",
+      "recruitment_type": "秋招",
+      "target": "2025和2026年毕业生",
+      "position": "短期班辅导老师",
+      "update_time": "2025-11-28",
+      "deadline": "招满为止",
+      "links": "https://yach-doc-shimo.zhiyinlou.com/forms/e1Az4O4lVpSrPRqW/fill",
+      "notice": "https://mp.weixin.qq.com/s/eJSrWm4Z5hOKqq7poTXSew",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-11-28T15:43:50.836209"
     }
   },
-  "last_clean_time": "2025-11-27T15:45:04.429853"
+  "last_clean_time": "2025-11-28T15:43:42.780306"
 }
