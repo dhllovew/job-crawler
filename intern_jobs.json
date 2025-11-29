@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-11-28T15:45:20.347433",
+  "last_update": "2025-11-29T15:43:12.904023",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5936,7 +5936,39 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-11-28T15:43:50.836209"
+    },
+    "拜耳-医药代表实习生": {
+      "job_type": "实习",
+      "company": "拜耳",
+      "company_type": "外企",
+      "location": "北京、上海、南京、广州、昆明、杭州、合肥、全国其他",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "医药代表实习生",
+      "update_time": "2025-11-29",
+      "deadline": "招满为止",
+      "links": "https://app.mokahr.com/campus-recruitment/bayer/148388?sharePageId=4365973#/jobs",
+      "notice": "https://mp.weixin.qq.com/s/BLMw8zIguoqml2yot6f_CA",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-11-29T15:42:15.312636"
+    },
+    "标普信评-China Ratings Analytical Winter Intern": {
+      "job_type": "实习",
+      "company": "标普信评",
+      "company_type": "外企",
+      "location": "北京",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "China Ratings Analytical Winter Intern",
+      "update_time": "2025-11-29",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/bcg4UvDPftNZf_6hmM4sMA",
+      "notice": "https://mp.weixin.qq.com/s/bcg4UvDPftNZf_6hmM4sMA",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-11-29T15:42:15.450201"
     }
   },
-  "last_clean_time": "2025-11-28T15:43:42.780306"
+  "last_clean_time": "2025-11-29T15:42:06.462197"
 }
