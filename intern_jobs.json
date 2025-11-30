@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-11-29T15:43:12.904023",
+  "last_update": "2025-11-30T15:42:37.867840",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5857,22 +5857,6 @@
       "notes": "-",
       "crawl_time": "2025-11-24T15:48:47.845234"
     },
-    "南方日报出版社-": {
-      "job_type": "实习",
-      "company": "南方日报出版社",
-      "company_type": "央国企",
-      "location": "广州",
-      "recruitment_type": "秋招",
-      "target": "2026年毕业生",
-      "position": "",
-      "update_time": "2025-11-24",
-      "deadline": "2025-11-30",
-      "links": "https://mp.weixin.qq.com/s/6wF_lKdc9MPgc7VkJBLzfw",
-      "notice": "https://mp.weixin.qq.com/s/6wF_lKdc9MPgc7VkJBLzfw",
-      "referral": "-",
-      "notes": "-",
-      "crawl_time": "2025-11-24T15:48:47.976877"
-    },
     "腾讯IEG【天美T1游戏策划实习提前批，及锋计划招募启动！】-游戏策划实习生": {
       "job_type": "实习",
       "company": "腾讯IEG【天美T1游戏策划实习提前批，及锋计划招募启动！】",
@@ -5970,5 +5954,5 @@
       "crawl_time": "2025-11-29T15:42:15.450201"
     }
   },
-  "last_clean_time": "2025-11-29T15:42:06.462197"
+  "last_clean_time": "2025-11-30T15:41:32.113070"
 }
