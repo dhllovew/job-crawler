@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-11-30T15:42:37.867840",
+  "last_update": "2025-12-01T15:48:16.840818",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5952,7 +5952,23 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-11-29T15:42:15.450201"
+    },
+    "标普-China Ratings Analytical Winter Intern（金融、经济、会计、工程、数学或相关商科/量化学科背景）": {
+      "job_type": "实习",
+      "company": "标普",
+      "company_type": "外企",
+      "location": "北京",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "China Ratings Analytical Winter Intern（金融、经济、会计、工程、数学或相关商科/量化学科背景）",
+      "update_time": "2025-12-01",
+      "deadline": "招满为止",
+      "links": "https://www.ajinga.com/recruiting/company/8245/job/198426/job-detail",
+      "notice": "https://mp.weixin.qq.com/s/bcg4UvDPftNZf_6hmM4sMA",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-12-01T15:47:19.969959"
     }
   },
-  "last_clean_time": "2025-11-30T15:41:32.113070"
+  "last_clean_time": "2025-12-01T15:47:12.262284"
 }
