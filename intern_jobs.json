@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-12-02T15:51:26.518517",
+  "last_update": "2025-12-03T15:50:41.746492",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -5984,7 +5984,23 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-12-02T15:50:27.003633"
+    },
+    "福建省星云大数据应用服务有限公司-技术类、市场类、职能类": {
+      "job_type": "实习",
+      "company": "福建省星云大数据应用服务有限公司",
+      "company_type": "民企",
+      "location": "福州",
+      "recruitment_type": "秋招",
+      "target": "2026年毕业生",
+      "position": "技术类、市场类、职能类",
+      "update_time": "2025-12-03",
+      "deadline": "2025.12.15",
+      "links": "https://www.hxrc.cn/user/jobPosition/index?name=&current=1",
+      "notice": "https://mp.weixin.qq.com/s/OfF3NuBYw6GIsk7o6x9yjw?scene=1&click_id=99",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2025-12-03T15:49:46.671072"
     }
   },
-  "last_clean_time": "2025-12-02T15:50:15.017680"
+  "last_clean_time": "2025-12-03T15:49:40.112307"
 }
