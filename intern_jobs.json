@@ -1,5 +1,5 @@
 {
-  "last_update": "2026-01-12T15:54:21.750465",
+  "last_update": "2026-01-13T15:54:10.212769",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -6000,7 +6000,23 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2025-12-03T15:49:46.671072"
+    },
+    "Autoliv奥托立夫-电子实习生 产品实习生 仿真实习生 研发实习生 项目管理实习生 市场实习生 财务实习生 法务实习生 IT实习生": {
+      "job_type": "实习",
+      "company": "Autoliv奥托立夫",
+      "company_type": "外企",
+      "location": "上海、武汉",
+      "recruitment_type": "春招",
+      "target": "2026届",
+      "position": "电子实习生 产品实习生 仿真实习生 研发实习生 项目管理实习生 市场实习生 财务实习生 法务实习生 IT实习生",
+      "update_time": "2026-01-13",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/wqKdC68OujBVpNTzhQeemQ",
+      "notice": "https://mp.weixin.qq.com/s/wqKdC68OujBVpNTzhQeemQ",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2026-01-13T15:53:17.180198"
     }
   },
-  "last_clean_time": "2026-01-12T15:53:17.096306"
+  "last_clean_time": "2026-01-13T15:53:08.523527"
 }
