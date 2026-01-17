@@ -1,5 +1,5 @@
 {
-  "last_update": "2026-01-16T15:50:48.036449",
+  "last_update": "2026-01-17T15:45:22.411899",
   "jobs": {
     "中信证券（山东）-实习生": {
       "job_type": "实习",
@@ -6016,7 +6016,23 @@
       "referral": "-",
       "notes": "-",
       "crawl_time": "2026-01-13T15:53:17.180198"
+    },
+    "瓦格耐电力-外贸销售工程师、国内销售工程师、机电工程师": {
+      "job_type": "实习",
+      "company": "瓦格耐电力",
+      "company_type": "外企",
+      "location": "佛山、驻马店、郑州",
+      "recruitment_type": "春招",
+      "target": "2025届,2026届",
+      "position": "外贸销售工程师、国内销售工程师、机电工程师",
+      "update_time": "2026-01-17",
+      "deadline": "招满为止",
+      "links": "https://mp.weixin.qq.com/s/ckcytDl8H321RL3LOenyzA",
+      "notice": "https://mp.weixin.qq.com/s/ckcytDl8H321RL3LOenyzA",
+      "referral": "-",
+      "notes": "-",
+      "crawl_time": "2026-01-17T15:44:23.458307"
     }
   },
-  "last_clean_time": "2026-01-16T15:49:41.326628"
+  "last_clean_time": "2026-01-17T15:44:13.731325"
 }
